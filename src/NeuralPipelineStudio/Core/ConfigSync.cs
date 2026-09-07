@@ -20,6 +20,20 @@ namespace NeuralPipelineStudio.Core
             {
                 new PipelineLayer 
                 { 
+                    Id = "pre_stack", 
+                    Name = "Lumenite Pre-Downscale Stack (Edge & Contrast Lock)", 
+                    TechniqueName = "Lumenite_Pre_Stack", 
+                    ShaderFile = "lumenite_Pre_Stack.fx", 
+                    Category = "Pre-Downscale", 
+                    Enabled = true, 
+                    AccentColorHex = "#4CAF50", 
+                    DllModelName = "sl.interposer.dll",
+                    AddonName = "ReShade64.dll",
+                    LoopCycles = 1,
+                    Description = "Preserva micro-contrasto e bordi geometrici ad alta frequenza sul frame nativo prima del downscaling" 
+                },
+                new PipelineLayer 
+                { 
                     Id = "pre_chain", 
                     Name = $"{s.PreChainCycles}x Ping-Pong Rescale Loop (Downscale {s.DownscaleRatio:F2}x ⇄ Upscale {s.UpscaleRatioOverrideValue}x)", 
                     TechniqueName = "Lumenite_IterativeDownUpChain_Pre", 
@@ -35,21 +49,7 @@ namespace NeuralPipelineStudio.Core
                     DllModelName = "nvngx_dlss.dll",
                     AddonName = "renodx-dlss5.addon64",
                     Intensity = 1.0f,
-                    Description = $"{s.PreChainCycles} cicli alternati Ping-Pong: Downscale {s.DownscaleRatio:F2}x ({s.DownscaleRatio * 100:F0}%) -> ReShade intermedio -> Upscale {s.UpscaleRatioOverrideValue}x con modello neurale (Calibrato per {profile.GpuName})" 
-                },
-                new PipelineLayer 
-                { 
-                    Id = "pre_stack", 
-                    Name = "Lumenite Pre-Downscale Stack (Edge & Contrast Lock)", 
-                    TechniqueName = "Lumenite_Pre_Stack", 
-                    ShaderFile = "lumenite_Pre_Stack.fx", 
-                    Category = "Pre-Downscale", 
-                    Enabled = true, 
-                    AccentColorHex = "#4CAF50", 
-                    DllModelName = "sl.interposer.dll",
-                    AddonName = "ReShade64.dll",
-                    LoopCycles = 1,
-                    Description = "Preserva micro-contrasto e bordi geometrici ad alta frequenza prima del downscaling" 
+                    Description = $"{s.PreChainCycles} cicli alternati Ping-Pong sul buffer pre-filtrato: Downscale {s.DownscaleRatio:F2}x ({s.DownscaleRatio * 100:F0}%) -> ReShade intermedio -> Upscale {s.UpscaleRatioOverrideValue}x con modello neurale (Calibrato per {profile.GpuName})" 
                 },
                 new PipelineLayer 
                 { 
@@ -409,6 +409,7 @@ namespace NeuralPipelineStudio.Core
                                     .ToList();
 
             string techniquesLine = "Techniques=" + string.Join(",", activeTechs);
+            string sortingLine = "TechniqueSorting=" + string.Join(",", activeTechs);
 
             if (File.Exists(presetPath))
             {
@@ -417,6 +418,11 @@ namespace NeuralPipelineStudio.Core
                     text = Regex.Replace(text, @"^Techniques\s*=.*$", techniquesLine, RegexOptions.Multiline);
                 else
                     text = techniquesLine + "\n" + text;
+
+                if (Regex.IsMatch(text, @"^TechniqueSorting\s*=", RegexOptions.Multiline))
+                    text = Regex.Replace(text, @"^TechniqueSorting\s*=.*$", sortingLine, RegexOptions.Multiline);
+                else
+                    text = text + "\n" + sortingLine;
 
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_SAMPLES", settings.MotionBlurSamples.ToString());
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_STRENGTH", settings.MotionBlurStrength.ToString("0.000000", CultureInfo.InvariantCulture));
@@ -427,7 +433,7 @@ namespace NeuralPipelineStudio.Core
             {
                 var sb = new StringBuilder();
                 sb.AppendLine(techniquesLine);
-                sb.AppendLine("TechniqueSorting=" + string.Join(",", activeTechs));
+                sb.AppendLine(sortingLine);
                 sb.AppendLine();
                 sb.AppendLine("[lumenite_MotionBlur.fx]");
                 sb.AppendLine($"BLUR_SAMPLES={settings.MotionBlurSamples}");
@@ -447,11 +453,28 @@ namespace NeuralPipelineStudio.Core
                 File.WriteAllText(reshadeIniPath, text, Encoding.UTF8);
             }
 
-            // 3. Update OptiScaler.ini
+            // 3. Update OptiScaler.ini with Universal Crash Guards & Heavy AI-Baked Parameters
             string optiIniPath = Path.Combine(gameDir, "OptiScaler.ini");
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
+
+                // CRASH GUARDS: Prevent crashes across all games and APIs
+                text = UpdateIniKey(text, "Proxy", "Enable", "false");
+                text = UpdateIniKey(text, "Proxy", "TargetName", "auto");
+                text = UpdateIniKey(text, "Hotfix", "RestoreComputeSignature", "true");
+                text = UpdateIniKey(text, "Hotfix", "RestoreGraphicSignature", "true");
+                text = UpdateIniKey(text, "Hotfix", "PreferFirstDedicatedGpu", "true");
+                text = UpdateIniKey(text, "Hotfix", "ManualInputPolling", "true");
+                text = UpdateIniKey(text, "Hooks", "EarlyHooking", "false");
+                text = UpdateIniKey(text, "Hooks", "UseNtdllHooks", "true");
+                text = UpdateIniKey(text, "FrameGen", "SkipResizeBuffers", "true");
+                text = UpdateIniKey(text, "FrameGen", "ModifyBufferState", "true");
+                text = UpdateIniKey(text, "ProcessFilter", "TargetProcessName", "auto");
+                text = UpdateIniKey(text, "ProcessFilter", "ProcessExclusionList", "auto");
+
+                // DLSS-NR & Upscaling
+                text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
                 text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
                 text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
                 text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
