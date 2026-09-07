@@ -366,7 +366,7 @@ namespace NeuralPipelineStudio.Core
 
             // 1. Update ReShadePreset.ini
             string presetPath = Path.Combine(gameDir, "ReShadePreset.ini");
-            var activeTechs = layers.Where(l => l.Enabled && !string.IsNullOrEmpty(l.ShaderFile))
+            var activeTechs = layers.Where(l => l.Enabled && !string.IsNullOrEmpty(l.ShaderFile) && l.ShaderFile.EndsWith(".fx", StringComparison.OrdinalIgnoreCase))
                                     .Select(l => $"{l.TechniqueName}@{l.ShaderFile}")
                                     .ToList();
 
