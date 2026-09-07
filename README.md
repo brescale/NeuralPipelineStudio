@@ -7,6 +7,12 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Bilingual](https://img.shields.io/badge/Language-English%20%7C%20Italiano-FFD700.svg)](#localization)
 
+> [!IMPORTANT]
+> ### 📦 Looking for the ready-to-run app? (No installation required)
+> **[👉 Click here to download NeuralPipelineStudio_v2.0_Portable.zip (570 MB) 👈](https://github.com/brescale/NeuralPipelineStudio/releases/download/v2.0-beta/NeuralPipelineStudio_v2.0_Portable.zip)**  
+> *The portable release comes pre-packaged with `NeuralPipelineStudio.exe`, 16 DLSS models, ReShade shaders, runtime proxies, presets, and the embedded .NET 8 runtime. Extract anywhere and double-click `NeuralPipelineStudio.exe` or `Launch Studio.bat`!*  
+> *(If you downloaded the source code ZIP, `Launch Studio.bat` will automatically compile with .NET 8 or prompt you to download the portable ZIP above).*
+
 **Neural Pipeline Studio** is a standalone, universal GPU neural rendering workstation and multi-API game injection manager engineered for AAA gaming environments (*Red Dead Redemption 2*, *Cyberpunk 2077*, *Grand Theft Auto V*, *The Witcher 3*, and more).
 
 Featuring a modern **Home-First architecture**, the studio automatically scans your PC storage drives to discover installed titles across Steam, Xbox Game Pass, Epic Games, and GOG, granting dedicated, isolated workstations for every title with real-time ping-pong rescaling, tensor multiplier control, hardware auto-calibration, and multi-API injection.
