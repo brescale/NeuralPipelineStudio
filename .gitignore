@@ -3,6 +3,7 @@ bin/
 obj/
 publish/
 dist/
+payload/
 *.exe
 *.dll
 *.pdb

@@ -1,0 +1,57 @@
+========================================================================================
+   NEURAL PIPELINE STUDIO v2.0 - PORTABLE HOME EDITION (MULTI-GAME & MULTI-PC)
+========================================================================================
+
+Questa versione e completamente autonoma, portabile e organizzata con flusso 'HOME-FIRST'.
+Puoi estrarre questa cartella ovunque: sul Desktop, su una chiavetta USB o su qualsiasi PC.
+
+FUNZIONALITA E FLUSSO DI LAVORO:
+----------------------------------------------------------------------------------------
+1. SCHERMATA HOME & LIBRERIA GIOCHI AUTOMATICA:
+   - All'apertura l'applicazione si avvia direttamente sulla 'Home Giochi' (senza essere
+     vincolata a priori ad alcun titolo predefinito).
+   - Clicca su '🔍 Scansiona Giochi nel Tuo PC': il software esplora tutti i dischi fissi
+     (Steam, Xbox Game Pass, Epic Games, GOG) e genera le schede interattive di tutti
+     i giochi compatibili trovati.
+   - Ogni scheda mostra titolo, motore grafico (RAGE, REDengine, Unreal, Creation),
+     API grafica (DirectX 12, Vulkan, DirectX 11), stato Anti-Cheat e badge di iniezione.
+
+2. WORKBENCH DEDICATO PER SINGOLO GIOCO:
+   - Clicca su '🎛 Configura Gioco & Pipeline' sulla scheda di qualsiasi gioco:
+     l'app entra immediatamente nello STUDIO DEDICATO a quel singolo titolo!
+   - In cima compare il banner del gioco selezionato con i pulsanti rapidi
+     ('🚀 Inietta', '🧹 Vanilla', '▶ Avvia', '💾 Salva') e il tasto '⬅ Torna alla Home'.
+   - Tutte le sezioni della barra laterale:
+     * '🎛 Sequenza Pipeline': sequenza dei layer e moltiplicatori per quel gioco.
+     * '⚡ Neural & DLSS': impostazioni DLSS (da 2 a 5.0), RenoDX e DLSS-NR per quel gioco.
+     * '📊 VRAM & Telemetria': budget VRAM calibrato per la risoluzione di quel gioco.
+     * '💾 Preset & Profili': caricamento o salvataggio preset dedicati.
+     * '📦 Modelli DLSS': gestione modelli DLL associati a quel gioco.
+
+3. COMMUTATORE LINGUA (ITALIANO / INGLESE):
+   - Clicca sui pulsanti '🇮🇹 IT' o '🇬🇧 EN' in alto a destra per cambiare la lingua istantaneamente.
+   - La preferenza viene salvata automaticamente in 'studio_settings.json'.
+
+4. TELEMETRIA HARDWARE & AUTO-CALIBRAZIONE SU QUALSIASI PC:
+   - In alto a destra vedi in tempo reale la GPU, il Driver, la VRAM, la CPU e la RAM.
+   - Cliccando '⚡ Auto-Calibrate PC', l'app calcola la configurazione ottimale (cicli,
+     iterazioni, super resolution, limite VRAM 80-85%) per le specifiche del PC:
+     * Enthusiast (16-24 GB): RTX 4090 / 4080 (Cicli 15x, Super Resolution 1000%)
+     * High-End (10-12 GB): RTX 4070 / 3080 (Cicli 10x, Super Resolution 900%)
+     * Mainstream (8 GB): RTX 4060 / 3070 / RX 6700 (Cicli 6x, Super Resolution 600%)
+     * Entry (4-6 GB): RTX 3050 / GTX 1660 (Cicli 3x, Super Resolution 400%)
+     * Non-RTX: AMD Radeon & Intel Arc (OptiScaler FSR 3.1 / XeSS 1.3 universale)
+
+5. WIKI TECNICA INTEGRATA:
+   - Clicca su '📚 Studio Wiki & Guide' nella barra laterale per consultare gli 8 capitoli
+     dettagliati sulla tecnologia neurale, matematica dei cicli e prevenzione crash.
+
+STRUTTURA CARTELLE:
+- NeuralPipelineStudio.exe : Eseguibile principale autonomo (.NET 8 runtime integrato)
+- presets/                 : Preset JSON calibrati per ogni tier hardware
+- payload/                 : Suite di file e modelli neurali per l'iniezione automatica
+- LEGGIMI_GUIDA_RAPIDA.txt : Guida rapida in Italiano
+- QUICKSTART_EN.txt        : Quickstart guide in English
+
+Buon divertimento con il massimo del rendering neurale!
+========================================================================================
