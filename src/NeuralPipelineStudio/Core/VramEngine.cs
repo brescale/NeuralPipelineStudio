@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using System.Linq;
 using NeuralPipelineStudio.Models;
 
 namespace NeuralPipelineStudio.Core
@@ -8,6 +8,7 @@ namespace NeuralPipelineStudio.Core
     {
         private static int _cachedTotalVram = 12282;
         private static string _cachedGpuName = "NVIDIA GeForce RTX 4070";
+        private static int _cachedUsedVram = 2150;
 
         static VramEngine()
         {
@@ -18,65 +19,32 @@ namespace NeuralPipelineStudio.Core
         {
             try
             {
-                var psi = new ProcessStartInfo
+                var prof = HardwareEngine.CurrentProfile;
+                if (prof != null)
                 {
-                    FileName = "nvidia-smi",
-                    Arguments = "--query-gpu=name,memory.total,memory.used --format=csv,noheader,nounits",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+                    if (!string.IsNullOrWhiteSpace(prof.GpuName))
+                        _cachedGpuName = prof.GpuName;
 
-                using var proc = Process.Start(psi);
-                if (proc != null)
-                {
-                    string output = proc.StandardOutput.ReadToEnd();
-                    proc.WaitForExit(1500);
+                    if (prof.TotalVramMB > 0)
+                        _cachedTotalVram = prof.TotalVramMB;
 
-                    if (!string.IsNullOrWhiteSpace(output))
-                    {
-                        var parts = output.Trim().Split(',');
-                        if (parts.Length >= 2)
-                        {
-                            _cachedGpuName = parts[0].Trim();
-                            if (int.TryParse(parts[1].Trim(), out int total))
-                                _cachedTotalVram = total;
-                        }
-                    }
+                    if (prof.TotalVramMB > 0 && prof.FreeVramMB > 0 && prof.TotalVramMB > prof.FreeVramMB)
+                        _cachedUsedVram = prof.TotalVramMB - prof.FreeVramMB;
+                    else
+                        _cachedUsedVram = 2150;
                 }
             }
             catch
             {
                 _cachedGpuName = "NVIDIA GeForce RTX 4070";
                 _cachedTotalVram = 12282;
+                _cachedUsedVram = 2150;
             }
         }
 
         public static int GetCurrentLiveUsedMemoryMB()
         {
-            try
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "nvidia-smi",
-                    Arguments = "--query-gpu=memory.used --format=csv,noheader,nounits",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                using var proc = Process.Start(psi);
-                if (proc != null)
-                {
-                    string output = proc.StandardOutput.ReadToEnd();
-                    proc.WaitForExit(1000);
-                    if (int.TryParse(output.Trim(), out int used))
-                        return used;
-                }
-            }
-            catch { }
-
-            return 2100;
+            return _cachedUsedVram;
         }
 
         public static VramReport CalculateReport(NeuralPipelineSettings settings, System.Collections.Generic.List<PipelineLayer>? layers = null)

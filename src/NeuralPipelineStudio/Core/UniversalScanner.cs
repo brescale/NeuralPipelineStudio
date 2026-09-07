@@ -432,10 +432,21 @@ namespace NeuralPipelineStudio.Core
                     }
                 }
 
+                // Crash Guardrail: strictly purge any experimental/conflicting .addon64 files from target directory
+                string[] dangerousAddons = { "dlss5-bridge.addon64", "renodx-dlss.addon64", "renodx-dlss5.addon64", "dlss5-feed.addon64" };
+                foreach (var da in dangerousAddons)
+                {
+                    string bad = Path.Combine(targetGameDir, da);
+                    if (File.Exists(bad))
+                    {
+                        try { File.Delete(bad); log($"[GUARDRAIL] Purged unstable addon: {da}"); } catch { }
+                    }
+                }
+
                 string dlssDir = PayloadManager.ResolveDlss5Directory();
                 if (Directory.Exists(dlssDir))
                 {
-                    var dlssFiles = Directory.GetFiles(dlssDir, "*.*").Where(f => f.EndsWith(".dll") || f.EndsWith(".addon64"));
+                    var dlssFiles = Directory.GetFiles(dlssDir, "*.*").Where(f => f.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !f.EndsWith(".addon64", StringComparison.OrdinalIgnoreCase));
                     foreach (var df in dlssFiles)
                     {
                         string fname = Path.GetFileName(df);

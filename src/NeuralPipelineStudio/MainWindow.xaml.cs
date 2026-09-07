@@ -297,7 +297,7 @@ namespace NeuralPipelineStudio
 
         private void InitializeTelemetry()
         {
-            _telemetryTimer.Interval = TimeSpan.FromSeconds(2);
+            _telemetryTimer.Interval = TimeSpan.FromSeconds(10);
             _telemetryTimer.Tick += (s, e) => UpdateVramTelemetry();
             _telemetryTimer.Start();
             UpdateVramTelemetry();
