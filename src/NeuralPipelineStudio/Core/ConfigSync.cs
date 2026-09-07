@@ -453,8 +453,10 @@ namespace NeuralPipelineStudio.Core
             {
                 string text = File.ReadAllText(optiIniPath);
                 // InitFlags & Post-processing
-                text = UpdateIniKey(text, "InitFlags", "AutoExposure", "true");
+                text = UpdateIniKey(text, "InitFlags", "AutoExposure", "auto"); // Do not force UE autoexposure on RDR2/Vulkan to avoid milky white wash
                 text = UpdateIniKey(text, "CAS", "DAClampOutput", "false");
+                text = UpdateIniKey(text, "CAS", "ContrastEnabled", "true");
+                text = UpdateIniKey(text, "CAS", "Contrast", "1.000000");
                 text = UpdateIniKey(text, "OutputScaling", "Enabled", "false");
 
                 // Adaptive Model Quality / Dynamic Resolution (Adaptive to FPS)
@@ -463,24 +465,24 @@ namespace NeuralPipelineStudio.Core
                 text = UpdateIniKey(text, "DRS", "DrsMinOverrideEnabled", "false");
                 text = UpdateIniKey(text, "DRS", "DrsMaxOverrideEnabled", "false");
 
-                // DlssNr - Standard Color, Adaptive Quality, All other items to MAX
+                // DlssNr - Calibrated Exposure, Enhanced Reflections & Details (Reasonable Maximums)
                 text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
                 text = UpdateIniKey(text, "DlssNr", "ApplyModel", "true");
                 text = UpdateIniKey(text, "DlssNr", "Passes", "15");
                 text = UpdateIniKey(text, "DlssNr", "TransferStrength", "2.000000"); // Detail strength max
                 text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color
                 text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
-                text = UpdateIniKey(text, "DlssNr", "MaxRatio", "8.000000");         // Highlight guard max
-                text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Auto exposure active
+                text = UpdateIniKey(text, "DlssNr", "MaxRatio", "2.500000");         // Highlight guard optimal reasonable limit (prevents white flare)
+                text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Exposure read from engine
                 text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
-                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", "1.000000");   // 1:1 exposure (fixes dark/crushed contrast)
+                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", "2.000000");   // Optimal reasonable limit: enhances reflections & highlights without blowing out white
                 text = UpdateIniKey(text, "DlssNr", "WorkingScale", "auto");         // Model resolution adaptive to FPS
                 text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
                 text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
-                text = UpdateIniKey(text, "DlssNr", "LocalStructure", "2.000000");   // Local structure max
-                text = UpdateIniKey(text, "DlssNr", "LocalTone", "4.000000");        // Local tone max
+                text = UpdateIniKey(text, "DlssNr", "LocalStructure", "2.000000");   // Local structure max (crisp specular reflections & geometry)
+                text = UpdateIniKey(text, "DlssNr", "LocalTone", "1.500000");        // Local tone optimal (maintains deep blacks & contrast, no milky haze)
                 text = UpdateIniKey(text, "DlssNr", "SkinStructure", "2.000000");    // Skin structure max
-                text = UpdateIniKey(text, "DlssNr", "Intensity", "4.000000");        // Intensity max
+                text = UpdateIniKey(text, "DlssNr", "Intensity", "2.000000");        // Optimal neural intensity
                 text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active
                 text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");          // Reversible hybrid composed
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);

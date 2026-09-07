@@ -235,10 +235,10 @@ namespace NeuralPipelineStudio.Core
                     s.SuperResolutionRatio = 10.0f; // 1000%
                     s.DlssNrPasses = 20;
                     s.DlssNrTransferStrength = 2.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
+                    s.DlssNrWhitePointTrim = 2.0f;
                     s.DlssNrLocalStructure = 2.0f;
                     s.DlssNrSkinStructure = 2.0f;
-                    s.DlssNrIntensity = 4.0f;
+                    s.DlssNrIntensity = 2.0f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;
@@ -260,10 +260,10 @@ namespace NeuralPipelineStudio.Core
                     s.SuperResolutionRatio = 9.0f; // 900%
                     s.DlssNrPasses = 15;
                     s.DlssNrTransferStrength = 2.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
+                    s.DlssNrWhitePointTrim = 2.0f;
                     s.DlssNrLocalStructure = 2.0f;
                     s.DlssNrSkinStructure = 2.0f;
-                    s.DlssNrIntensity = 4.0f;
+                    s.DlssNrIntensity = 2.0f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;

@@ -671,10 +671,10 @@
                                     <Slider x:Name="slDlssNrTransfer" Minimum="0" Maximum="100" Value="100" ValueChanged="NeuralSlider_Changed"/>
 
                                     <Grid Margin="0,8,0,3">
-                                        <TextBlock Text="White Point Trim:" ToolTip="Regolazione delle alte luci nel denoiser (Standard: 1.0)"/>
-                                        <TextBlock x:Name="valDlssNrTrim" Text="1.0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
+                                        <TextBlock Text="White Point Trim:" ToolTip="Regolazione alte luci e riflessi (Limite ottimale: 2.0)"/>
+                                        <TextBlock x:Name="valDlssNrTrim" Text="2.0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
                                     </Grid>
-                                    <Slider x:Name="slDlssNrTrim" Minimum="0" Maximum="50" Value="10" ValueChanged="NeuralSlider_Changed"/>
+                                    <Slider x:Name="slDlssNrTrim" Minimum="0" Maximum="50" Value="20" ValueChanged="NeuralSlider_Changed"/>
                                 </StackPanel>
                             </Border>
 
