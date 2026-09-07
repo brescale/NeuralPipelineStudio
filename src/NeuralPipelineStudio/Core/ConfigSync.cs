@@ -453,35 +453,89 @@ namespace NeuralPipelineStudio.Core
                 File.WriteAllText(reshadeIniPath, text, Encoding.UTF8);
             }
 
-            // 3. Update OptiScaler.ini with Universal Crash Guards & Heavy AI-Baked Parameters
+            // 3. Update OptiScaler.ini with Universal Stability Guards & Heavy AI-Baked Parameters
             string optiIniPath = Path.Combine(gameDir, "OptiScaler.ini");
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
 
-                // CRASH GUARDS: Prevent crashes across all games and APIs
-                text = UpdateIniKey(text, "Proxy", "Enable", "false");
-                text = UpdateIniKey(text, "Proxy", "TargetName", "auto");
+                var hw = HardwareEngine.CurrentProfile;
+                bool isVulkanGame = File.Exists(Path.Combine(gameDir, "vulkan-1.dll")) || 
+                                    File.Exists(Path.Combine(gameDir, "RDR2.exe")) || 
+                                    File.Exists(Path.Combine(gameDir, "NvLowLatencyVk.dll"));
+
+                // STABILITY GUARDS: Safe loader integration across all games and APIs (Prevents crashes in all engines)
                 text = UpdateIniKey(text, "Hotfix", "RestoreComputeSignature", "true");
                 text = UpdateIniKey(text, "Hotfix", "RestoreGraphicSignature", "true");
                 text = UpdateIniKey(text, "Hotfix", "PreferFirstDedicatedGpu", "true");
-                text = UpdateIniKey(text, "Hotfix", "ManualInputPolling", "true");
-                text = UpdateIniKey(text, "Hooks", "EarlyHooking", "false");
-                text = UpdateIniKey(text, "Hooks", "UseNtdllHooks", "true");
+                text = UpdateIniKey(text, "Hotfix", "ManualInputPolling", "auto"); // 'auto' avoids fatal DirectInput8Create hook collision
+                text = UpdateIniKey(text, "Hooks", "EarlyHooking", "auto");         // 'auto' avoids premature hook crashes
+                text = UpdateIniKey(text, "Hooks", "UseNtdllHooks", "auto");        // 'auto' avoids loader deadlocks
                 text = UpdateIniKey(text, "FrameGen", "SkipResizeBuffers", "true");
                 text = UpdateIniKey(text, "FrameGen", "ModifyBufferState", "true");
                 text = UpdateIniKey(text, "ProcessFilter", "TargetProcessName", "auto");
                 text = UpdateIniKey(text, "ProcessFilter", "ProcessExclusionList", "auto");
+                text = UpdateIniKey(text, "QualityOverrides", "QualityRatioOverrideEnabled", "false");
+                text = UpdateIniKey(text, "DRS", "DrsMinOverrideEnabled", "false");
+                text = UpdateIniKey(text, "DRS", "DrsMaxOverrideEnabled", "false");
+                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideEnabled", "false");
 
-                // DLSS-NR & Upscaling
-                text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
-                text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
-                text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
+                // API & DXGI SPOOFING GUARDS
+                if (isVulkanGame)
+                {
+                    text = UpdateIniKey(text, "Spoofing", "Dxgi", "false"); // CRITICAL for Vulkan stability
+                }
+                else
+                {
+                    text = UpdateIniKey(text, "Spoofing", "Dxgi", "auto");
+                }
+
+                // MULTI-GPU VENDOR HANDLING (NVIDIA RTX / GTX / AMD Radeon / Intel Arc)
+                if (hw.SupportsTensorCores) // NVIDIA RTX
+                {
+                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "dlss");
+                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "dlss");
+                    text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
+                    text = UpdateIniKey(text, "DlssNr", "ApplyModel", "true");
+                    text = UpdateIniKey(text, "DlssNr", "UseProxy", "true");
+                    text = UpdateIniKey(text, "DlssNr", "ProxyProbe", "true");
+                    text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");
+                    text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
+                    text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color fidelity
+                    text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
+                    text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Auto exposure active
+                    text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
+                    text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "WorkingScale", "auto");         // Model resolution adaptive to FPS
+                    text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
+                    text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
+                    text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "LocalTone", "4.000000");        // Local tone max
+                    text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active
+                }
+                else if (hw.GpuVendor == "AMD") // AMD Radeon
+                {
+                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "ffx");
+                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
+                    text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
+                }
+                else if (hw.GpuVendor == "Intel") // Intel Arc
+                {
+                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "xess");
+                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
+                    text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
+                }
+                else // GTX / Non-RTX
+                {
+                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "ffx");
+                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
+                    text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
+                }
+
                 text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
             }
@@ -514,7 +568,7 @@ namespace NeuralPipelineStudio.Core
             catch { }
         }
 
-        private static string UpdateIniKey(string text, string section, string key, string value)
+        public static string UpdateIniKey(string text, string section, string key, string value)
         {
             var pattern = $@"(\[{Regex.Escape(section)}\][\s\S]*?^\s*{Regex.Escape(key)}\s*=)[^\r\n]*";
             if (Regex.IsMatch(text, pattern, RegexOptions.Multiline))

@@ -432,6 +432,46 @@ namespace NeuralPipelineStudio.Core
                     }
                 }
 
+                // Auto-tune deployed OptiScaler.ini for detected API and GPU
+                string targetOptiIni = Path.Combine(targetGameDir, "OptiScaler.ini");
+                if (File.Exists(targetOptiIni))
+                {
+                    try
+                    {
+                        string iniText = File.ReadAllText(targetOptiIni);
+                        var hw = HardwareEngine.CurrentProfile;
+                        if (api == GraphicsApi.Vulkan)
+                        {
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Spoofing", "Dxgi", "false");
+                        }
+                        else
+                        {
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Spoofing", "Dxgi", "auto");
+                        }
+
+                        if (hw.SupportsTensorCores)
+                        {
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "Dx12Upscaler", "dlss");
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "VulkanUpscaler", "dlss");
+                            iniText = ConfigSync.UpdateIniKey(iniText, "DlssNr", "Enabled", "true");
+                        }
+                        else if (hw.GpuVendor == "AMD")
+                        {
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "Dx12Upscaler", "ffx");
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "VulkanUpscaler", "ffx");
+                            iniText = ConfigSync.UpdateIniKey(iniText, "DlssNr", "Enabled", "false");
+                        }
+                        else if (hw.GpuVendor == "Intel")
+                        {
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "Dx12Upscaler", "xess");
+                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "VulkanUpscaler", "ffx");
+                            iniText = ConfigSync.UpdateIniKey(iniText, "DlssNr", "Enabled", "false");
+                        }
+                        File.WriteAllText(targetOptiIni, iniText, Encoding.UTF8);
+                    }
+                    catch { }
+                }
+
                 string dlssDir = PayloadManager.ResolveDlss5Directory();
                 if (Directory.Exists(dlssDir))
                 {
