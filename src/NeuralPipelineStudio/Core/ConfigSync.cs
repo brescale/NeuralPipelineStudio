@@ -452,39 +452,14 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
-                // InitFlags & Post-processing
-                text = UpdateIniKey(text, "InitFlags", "AutoExposure", "auto"); // Do not force UE autoexposure on RDR2/Vulkan to avoid milky white wash
-                text = UpdateIniKey(text, "CAS", "DAClampOutput", "false");
-                text = UpdateIniKey(text, "CAS", "ContrastEnabled", "true");
-                text = UpdateIniKey(text, "CAS", "Contrast", "1.000000");
-                text = UpdateIniKey(text, "OutputScaling", "Enabled", "false");
-
-                // Adaptive Model Quality / Dynamic Resolution (Adaptive to FPS)
-                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideEnabled", "false");
-                text = UpdateIniKey(text, "QualityOverrides", "QualityRatioOverrideEnabled", "false");
-                text = UpdateIniKey(text, "DRS", "DrsMinOverrideEnabled", "false");
-                text = UpdateIniKey(text, "DRS", "DrsMaxOverrideEnabled", "false");
-
-                // DlssNr - Calibrated Exposure, Enhanced Reflections & Details (Reasonable Maximums)
-                text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
-                text = UpdateIniKey(text, "DlssNr", "ApplyModel", "true");
-                text = UpdateIniKey(text, "DlssNr", "Passes", "15");
-                text = UpdateIniKey(text, "DlssNr", "TransferStrength", "2.000000"); // Detail strength max
-                text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color
-                text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
-                text = UpdateIniKey(text, "DlssNr", "MaxRatio", "2.500000");         // Highlight guard optimal reasonable limit (prevents white flare)
-                text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Exposure read from engine
-                text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
-                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", "2.000000");   // Optimal reasonable limit: enhances reflections & highlights without blowing out white
-                text = UpdateIniKey(text, "DlssNr", "WorkingScale", "auto");         // Model resolution adaptive to FPS
-                text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
-                text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
-                text = UpdateIniKey(text, "DlssNr", "LocalStructure", "2.000000");   // Local structure max (crisp specular reflections & geometry)
-                text = UpdateIniKey(text, "DlssNr", "LocalTone", "1.500000");        // Local tone optimal (maintains deep blacks & contrast, no milky haze)
-                text = UpdateIniKey(text, "DlssNr", "SkinStructure", "2.000000");    // Skin structure max
-                text = UpdateIniKey(text, "DlssNr", "Intensity", "2.000000");        // Optimal neural intensity
-                text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active
-                text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");          // Reversible hybrid composed
+                text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
+                text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
             }
 
