@@ -408,7 +408,7 @@ namespace NeuralPipelineStudio.Core
                     installedFiles.Add("OptiScaler");
                 }
 
-                string[] addons = { "renodx-dlss5.addon64", "dlss5-bridge.addon64", "nvngx.dll_dlssnr.dll" };
+                string[] addons = { "nvngx.dll_dlssnr.dll" };
                 foreach (var addon in addons)
                 {
                     string srcA = Path.Combine(sourceMasterDir, addon);
@@ -416,11 +416,11 @@ namespace NeuralPipelineStudio.Core
                     {
                         File.Copy(srcA, Path.Combine(targetGameDir, addon), true);
                         installedFiles.Add(addon);
-                        log($"[INSTALL] Deployed Addon: {addon}");
+                        log($"[INSTALL] Deployed Library: {addon}");
                     }
                 }
 
-                string[] configs = { "ReShade.ini", "ReShadePreset.ini", "OptiScaler.ini", "dlss5-bridge.cfg", "dlss5-feed.cfg" };
+                string[] configs = { "ReShade.ini", "ReShadePreset.ini", "OptiScaler.ini" };
                 foreach (var cfg in configs)
                 {
                     string srcC = Path.Combine(sourceMasterDir, cfg);
