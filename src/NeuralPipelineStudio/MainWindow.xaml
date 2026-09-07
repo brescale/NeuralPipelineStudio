@@ -1,7 +1,7 @@
 <Window x:Class="NeuralPipelineStudio.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Neural Pipeline Studio v2.1 - Universal AAA Neural Rendering Suite"
+        Title="Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite"
         Width="1180" Height="700" MinWidth="920" MinHeight="580"
         WindowStartupLocation="Manual"
         Background="{StaticResource BrushBgDark}"
@@ -20,7 +20,7 @@
                 <!-- Branding -->
                 <StackPanel DockPanel.Dock="Top" Margin="4,6,4,12">
                     <TextBlock Text="⚡ NEURAL STUDIO" FontSize="17" FontWeight="Bold" Foreground="{StaticResource BrushAccentCyan}"/>
-                    <TextBlock Text="Universal Fleet Edition v2.1" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" Margin="2,2,0,0"/>
+                    <TextBlock Text="Universal Fleet Edition v2.0" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" Margin="2,2,0,0"/>
                 </StackPanel>
 
                 <!-- System Hardware Profile Card at Bottom -->
@@ -671,30 +671,29 @@
                                     <Slider x:Name="slDlssNrTransfer" Minimum="0" Maximum="100" Value="100" ValueChanged="NeuralSlider_Changed"/>
 
                                     <Grid Margin="0,8,0,3">
-                                        <TextBlock Text="White Point Trim:" ToolTip="Regolazione delle alte luci nel denoiser (Consigliato: 4.0)"/>
-                                        <TextBlock x:Name="valDlssNrTrim" Text="4.0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
+                                        <TextBlock Text="White Point Trim:" ToolTip="Regolazione delle alte luci nel denoiser (Consigliato: 1.0)"/>
+                                        <TextBlock x:Name="valDlssNrTrim" Text="1.0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
                                     </Grid>
-                                    <Slider x:Name="slDlssNrTrim" Minimum="0" Maximum="50" Value="40" ValueChanged="NeuralSlider_Changed"/>
+                                    <Slider x:Name="slDlssNrTrim" Minimum="0" Maximum="50" Value="10" ValueChanged="NeuralSlider_Changed"/>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Card 4: Fidelity Chains & Motion Polish -->
+                            <!-- Card 4: Iterative Ping-Pong Chains -->
                             <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCard}" Margin="8,0,0,10">
                                 <StackPanel>
-                                    <TextBlock Text="Fidelity Chains &amp; Motion Polish" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,6"/>
-                                    <TextBlock Text="Pristine Single-Pass Pipeline (Zero Ping-Pong Degradation)" Foreground="{StaticResource BrushAccentGreen}" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Iterative Down/Up Ping-Pong Chains" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,10"/>
                                     
                                     <Grid Margin="0,3">
-                                        <TextBlock Text="Pre-Downscale Fidelity Pass:" ToolTip="Campionamento e pre-condizionamento nitidezza prima del bridge neurale"/>
-                                        <TextBox x:Name="valPreCycles" Text="1x" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPreCycles_LostFocus" KeyDown="ValPreCycles_KeyDown" ToolTip="Pass di fedeltà pre-chain editabile"/>
+                                        <TextBlock Text="Pre-Downscale Iterative Cycles:" ToolTip="Cicli alternati di campionamento prima del passaggio neurale (Consigliato: 10x)"/>
+                                        <TextBox x:Name="valPreCycles" Text="10x" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPreCycles_LostFocus" KeyDown="ValPreCycles_KeyDown" ToolTip="Cicli ping-pong pre-chain editabili"/>
                                     </Grid>
-                                    <Slider x:Name="slPreCycles" Minimum="1" Maximum="5" Value="1" ValueChanged="NeuralSlider_Changed"/>
+                                    <Slider x:Name="slPreCycles" Minimum="1" Maximum="20" Value="10" ValueChanged="NeuralSlider_Changed"/>
 
                                     <Grid Margin="0,8,0,3">
-                                        <TextBlock Text="Post-Neural Output Fidelity Pass:" ToolTip="Consolidamento nitidezza e contrasto con spline Catmull-Rom ad alta fedeltà"/>
-                                        <TextBox x:Name="valPostCycles" Text="1x" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPostCycles_LostFocus" KeyDown="ValPostCycles_KeyDown" ToolTip="Pass di fedeltà post-chain editabile"/>
+                                        <TextBlock Text="Post-Neural Output Iterative Cycles:" ToolTip="Cicli alternati di consolidamento prima dell'output a schermo (Consigliato: 10x)"/>
+                                        <TextBox x:Name="valPostCycles" Text="10x" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPostCycles_LostFocus" KeyDown="ValPostCycles_KeyDown" ToolTip="Cicli ping-pong post-chain editabili"/>
                                     </Grid>
-                                    <Slider x:Name="slPostCycles" Minimum="1" Maximum="5" Value="1" ValueChanged="NeuralSlider_Changed"/>
+                                    <Slider x:Name="slPostCycles" Minimum="1" Maximum="20" Value="10" ValueChanged="NeuralSlider_Changed"/>
 
                                     <Grid Margin="0,8,0,3">
                                         <TextBlock Text="Motion Blur Samples &amp; Strength:" ToolTip="Campioni e forza dello shutter cinematico guidato dal motion buffer"/>

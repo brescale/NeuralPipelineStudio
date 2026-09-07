@@ -30,26 +30,7 @@ namespace NeuralPipelineStudio.Core
                     DllModelName = "sl.interposer.dll",
                     AddonName = "ReShade64.dll",
                     LoopCycles = 1,
-                    Description = "Preserva micro-contrasto e bordi geometrici ad alta frequenza sul frame nativo prima del downscaling" 
-                },
-                new PipelineLayer 
-                { 
-                    Id = "pre_chain", 
-                    Name = $"{s.PreChainCycles}x Pre-Neural Resolution & Fidelity Chain", 
-                    TechniqueName = "Lumenite_IterativeDownUpChain_Pre", 
-                    ShaderFile = "lumenite_IterativeDownUpChain_Pre.fx", 
-                    Category = "Pre-Downscale", 
-                    Enabled = true, 
-                    AccentColorHex = "#00F0FF", 
-                    LoopCycles = s.PreChainCycles,
-                    ScaleMode = "High-Fidelity Spline",
-                    DownscaleRatio = s.DownscaleRatio,
-                    UpscaleRatio = s.UpscaleRatio,
-                    UpscaleModel = "Catmull-Rom Bicubic Spline",
-                    DllModelName = "nvngx_dlss.dll",
-                    AddonName = "ReShade64.dll",
-                    Intensity = 1.0f,
-                    Description = "Campionamento ad alta fedelta e pre-condizionamento nitidezza pre-upscale in pass diretto senza rimasticamento" 
+                    Description = "Preserva micro-contrasto e bordi geometrici ad alta frequenza prima del downscaling" 
                 },
                 new PipelineLayer 
                 { 
@@ -88,8 +69,8 @@ namespace NeuralPipelineStudio.Core
                     Category = "Neural Engine", 
                     Enabled = true, 
                     AccentColorHex = "#9C27B0", 
-                    DllModelName = "renodx-dlss.addon64",
-                    AddonName = "renodx-dlss.addon64",
+                    DllModelName = "renodx-dlss5.addon64",
+                    AddonName = "renodx-dlss5.addon64",
                     LoopCycles = 1,
                     NeuralPassIterations = s.NeuralPass1Iterations,
                     Intensity = s.NeuralPass1Intensity,
@@ -127,7 +108,7 @@ namespace NeuralPipelineStudio.Core
                     NeuralPassIterations = s.DlssNrPasses,
                     Intensity = s.DlssNrTransferStrength,
                     DllModelName = "nvngx.dll_dlssnr.dll",
-                    AddonName = "OptiScaler.dll",
+                    AddonName = "renodx-dlss5.addon64",
                     Description = $"Denoising neurale a {s.DlssNrPasses} passaggi con layer 100% sintetizzato, skin structure {s.DlssNrSkinStructure:F1}x" 
                 },
                 new PipelineLayer 
@@ -184,7 +165,7 @@ namespace NeuralPipelineStudio.Core
                     Enabled = s.BloomEnabled, 
                     AccentColorHex = "#FF5722", 
                     DllModelName = "sl.deepdvc.dll",
-                    AddonName = "ReShade64.dll",
+                    AddonName = "renodx-dlss5.addon64",
                     LoopCycles = 1,
                     Description = "Diffrazione ottica anamorfica e dispersione spettrale delle luci ad alta luminanza" 
                 },
@@ -197,9 +178,9 @@ namespace NeuralPipelineStudio.Core
                     Category = "Post-Neural", 
                     Enabled = s.TraaEnabled, 
                     AccentColorHex = "#8BC34A", 
-                    DllModelName = "sl.dlss.dll", 
-                    AddonName = "ReShade64.dll", 
-                    LoopCycles = 1, 
+                    DllModelName = "sl.dlss.dll",
+                    AddonName = "ReShade64.dll",
+                    LoopCycles = 1,
                     Description = "Antialiasing di rifinitura con accumulo temporale sub-pixel" 
                 },
                 new PipelineLayer 
@@ -211,31 +192,12 @@ namespace NeuralPipelineStudio.Core
                     Category = "Post-Neural", 
                     Enabled = s.MotionBlurEnabled, 
                     AccentColorHex = "#CDDC39", 
-                    DllModelName = "nvngx_dlssg.dll", 
-                    AddonName = "OptiScaler.dll", 
-                    LoopCycles = 1, 
+                    DllModelName = "nvngx_dlssg.dll",
+                    AddonName = "OptiScaler.dll",
+                    LoopCycles = 1,
                     Description = s.MotionBlurEnabled 
-                        ? $"Sfuocatura cinematografica a {s.MotionBlurSamples} campioni guidata dal velocity buffer" 
+                        ? $"Sfuocatura cinematografica a {s.MotionBlurSamples} campioni guidata dal velocity buffer"
                         : "Bypassata per preservare frame-rate e budget memoria" 
-                },
-                new PipelineLayer 
-                { 
-                    Id = "post_chain", 
-                    Name = $"{s.PostChainCycles}x Post-Neural Output Fidelity & Sharpening", 
-                    TechniqueName = "Lumenite_IterativeDownUpChain", 
-                    ShaderFile = "lumenite_IterativeDownUpChain.fx", 
-                    Category = "Post-Chain", 
-                    Enabled = true, 
-                    AccentColorHex = "#00F0FF", 
-                    LoopCycles = s.PostChainCycles,
-                    ScaleMode = "High-Fidelity Spline",
-                    DownscaleRatio = 0.85f,
-                    UpscaleRatio = 1.18f,
-                    UpscaleModel = "Catmull-Rom Bicubic Spline",
-                    DllModelName = "sl.nis.dll",
-                    AddonName = "ReShade64.dll",
-                    Intensity = 1.0f,
-                    Description = "Consolidamento contrasto e nitidezza con spline bicubica Catmull-Rom in pass diretto ad alta fedelta" 
                 }
             };
         }
@@ -259,13 +221,6 @@ namespace NeuralPipelineStudio.Core
                     var loaded = System.Text.Json.JsonSerializer.Deserialize<List<PipelineLayer>>(json);
                     if (loaded != null && loaded.Count > 0)
                     {
-                        foreach (var l in loaded)
-                        {
-                            if (l.AddonName == "renodx-dlss5.addon64") l.AddonName = "renodx-dlss.addon64";
-                            if (l.DllModelName == "renodx-dlss5.addon64") l.DllModelName = "renodx-dlss.addon64";
-                            if (l.Id == "pre_chain" && l.AddonName == "renodx-dlss.addon64") l.AddonName = "ReShade64.dll";
-                        }
-
                         layers = loaded;
                         // Auto-associate dedicated Shader, DLL Model, and Addon if missing or empty, preserving 100% of user settings!
                         var defaultRef = GetDefaultPipeline(profile);
@@ -416,7 +371,6 @@ namespace NeuralPipelineStudio.Core
                                     .ToList();
 
             string techniquesLine = "Techniques=" + string.Join(",", activeTechs);
-            string sortingLine = "TechniqueSorting=" + string.Join(",", activeTechs);
 
             if (File.Exists(presetPath))
             {
@@ -426,47 +380,8 @@ namespace NeuralPipelineStudio.Core
                 else
                     text = techniquesLine + "\n" + text;
 
-                if (Regex.IsMatch(text, @"^TechniqueSorting\s*=", RegexOptions.Multiline))
-                    text = Regex.Replace(text, @"^TechniqueSorting\s*=.*$", sortingLine, RegexOptions.Multiline);
-                else
-                    text = text + "\n" + sortingLine;
-
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_SAMPLES", settings.MotionBlurSamples.ToString());
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_STRENGTH", settings.MotionBlurStrength.ToString("0.000000", CultureInfo.InvariantCulture));
-
-                // Calibrated Anamorphic Bloom (excl. skybox to stop blinding haze)
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_INTENSITY", "0.080000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_THRESHOLD", "0.200000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_STRETCH", "4.000000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_SKIP_SKYBOX", "1");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_INTENSITY", "0.100000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_THRESHOLD", "0.250000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_SKIP_SKYBOX", "1");
-
-                // Calibrated Specular Reflections (SSSR)
-                text = UpdateIniKey(text, "lumenite_SSSR.fx", "ROUGHNESS", "0.250000");
-                text = UpdateIniKey(text, "lumenite_SSSR.fx", "F0", "0.040000");
-                text = UpdateIniKey(text, "lumenite_SSSR.fx", "BUMP_SCALE", "0.400000");
-                text = UpdateIniKey(text, "lumenite_SSSR.fx", "DEPTH_BOUNDARY", "20.000000");
-                text = UpdateIniKey(text, "lumenite_SSSR.fx", "TAIL_FEATHERING", "0.850000");
-
-                // Calibrated Ambient Occlusion
-                text = UpdateIniKey(text, "lumenite_RTAO.fx", "AO_INTENSITY", "1.000000");
-                text = UpdateIniKey(text, "lumenite_RTAO.fx", "DEPTH_BOUNDARY", "25.000000");
-                text = UpdateIniKey(text, "lumenite_LSAO.fx", "AO_INTENSITY", "0.750000");
-                text = UpdateIniKey(text, "lumenite_LSAO.fx", "DEPTH_BOUNDARY", "50.000000");
-
-                // Micro-contrast & Clarity
-                text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CONTRAST", "1.000000");
-                text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CLARITY", "0.150000");
-
-                // Pre & Post High-Fidelity Spline & Sharpening
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_CONTRAST", "1.000000");
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_CLARITY", "0.150000");
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_SHARPNESS", "0.200000");
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_CONTRAST", "1.000000");
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_CLARITY", "0.100000");
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_SHARPNESS", "0.250000");
 
                 File.WriteAllText(presetPath, text, Encoding.UTF8);
             }
@@ -474,7 +389,7 @@ namespace NeuralPipelineStudio.Core
             {
                 var sb = new StringBuilder();
                 sb.AppendLine(techniquesLine);
-                sb.AppendLine(sortingLine);
+                sb.AppendLine("TechniqueSorting=" + string.Join(",", activeTechs));
                 sb.AppendLine();
                 sb.AppendLine("[lumenite_MotionBlur.fx]");
                 sb.AppendLine($"BLUR_SAMPLES={settings.MotionBlurSamples}");
@@ -487,116 +402,23 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(reshadeIniPath))
             {
                 string text = File.ReadAllText(reshadeIniPath);
-                // Strip obsolete RenoDX.DLSS5 section if present
-                text = Regex.Replace(text, @"\[RenoDX\.DLSS5\][\s\S]*?(?=(\r?\n\[|\Z))", "", RegexOptions.Multiline);
-
-                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingEncoding", "0"); // Auto BT.709 colorspace
-                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteOverride", "0"); // Auto diffuse white (100 nits SDR)
-                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteNits", "100");
-                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingUiCorrectionMode", "0");
-                text = UpdateIniKey(text, "RENODX-DLSS", "DLSSAutoExposure", "0");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingPassCount", "1");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingIntensity", "1.0");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingStyle", "0");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingGlobalToneStrength", "1");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalToneStrength", "1");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalStructureStrength", "1");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingSkinStructureStrength", "1");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingAutoMask", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingPassCount", settings.NeuralPass1Iterations.ToString());
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingIntensity", settings.NeuralPass1Intensity.ToString("0", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingStyle", settings.NeuralPass1Style.ToString());
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRDiffuseWhiteNits", settings.NeuralPass1DiffuseWhiteNits.ToString("0", CultureInfo.InvariantCulture));
                 File.WriteAllText(reshadeIniPath, text, Encoding.UTF8);
             }
 
-            // 3. Update OptiScaler.ini with Universal Stability Guards & Heavy AI-Baked Parameters
+            // 3. Update OptiScaler.ini
             string optiIniPath = Path.Combine(gameDir, "OptiScaler.ini");
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
-
-                var hw = HardwareEngine.CurrentProfile;
-                bool isVulkanGame = File.Exists(Path.Combine(gameDir, "vulkan-1.dll")) || 
-                                    File.Exists(Path.Combine(gameDir, "RDR2.exe")) || 
-                                    File.Exists(Path.Combine(gameDir, "NvLowLatencyVk.dll"));
-
-                // STABILITY GUARDS: Safe loader integration across all games and APIs (Prevents crashes in all engines)
-                text = UpdateIniKey(text, "Hotfix", "RestoreComputeSignature", "true");
-                text = UpdateIniKey(text, "Hotfix", "RestoreGraphicSignature", "true");
-                text = UpdateIniKey(text, "Hotfix", "PreferFirstDedicatedGpu", "true");
-                text = UpdateIniKey(text, "Hotfix", "ManualInputPolling", "auto"); // 'auto' avoids fatal DirectInput8Create hook collision
-                text = UpdateIniKey(text, "Hooks", "EarlyHooking", "auto");         // 'auto' avoids premature hook crashes
-                text = UpdateIniKey(text, "Hooks", "UseNtdllHooks", "auto");        // 'auto' avoids loader deadlocks
-                text = UpdateIniKey(text, "FrameGen", "SkipResizeBuffers", "true");
-                text = UpdateIniKey(text, "FrameGen", "ModifyBufferState", "true");
-                text = UpdateIniKey(text, "ProcessFilter", "TargetProcessName", "auto");
-                text = UpdateIniKey(text, "ProcessFilter", "ProcessExclusionList", "auto");
-                text = UpdateIniKey(text, "QualityOverrides", "QualityRatioOverrideEnabled", "false");
-                text = UpdateIniKey(text, "DRS", "DrsMinOverrideEnabled", "false");
-                text = UpdateIniKey(text, "DRS", "DrsMaxOverrideEnabled", "false");
-                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideEnabled", "false");
-
-                // API & DXGI SPOOFING GUARDS
-                if (isVulkanGame)
-                {
-                    text = UpdateIniKey(text, "Spoofing", "Dxgi", "false"); // CRITICAL for Vulkan stability
-                }
-                else
-                {
-                    text = UpdateIniKey(text, "Spoofing", "Dxgi", "auto");
-                }
-
-                // Exposure & Contrast Control
-                text = UpdateIniKey(text, "InitFlags", "AutoExposure", "auto"); // Prevents unnatural blowout in physical lighting engines
-
-                // MULTI-GPU VENDOR HANDLING (NVIDIA RTX / GTX / AMD Radeon / Intel Arc)
-                if (hw.SupportsTensorCores) // NVIDIA RTX
-                {
-                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "dlss");
-                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "dlss");
-                    text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
-                    text = UpdateIniKey(text, "DlssNr", "ApplyModel", "true");
-                    text = UpdateIniKey(text, "DlssNr", "UseProxy", "true");
-                    text = UpdateIniKey(text, "DlssNr", "ProxyProbe", "true");
-                    text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");
-                    text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
-                    text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color fidelity
-                    text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
-                    text = UpdateIniKey(text, "DlssNr", "MaxRatio", "1.500000");         // Strictly caps luminance boost to 1.5x, eliminating all blown out ceilings
-                    text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "false"); // Directly sample real frame luminance without engine exposure division
-                    text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
-                    text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "WorkingScale", "auto");         // Model resolution adaptive to FPS
-                    text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
-                    text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
-                    text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "LocalTone", "1.000000");        // 1:1 neutral tone mapping (no white ceiling clipping)
-                    text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active
-                }
-                else if (hw.GpuVendor == "AMD") // AMD Radeon
-                {
-                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "ffx");
-                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
-                    text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
-                }
-                else if (hw.GpuVendor == "Intel") // Intel Arc
-                {
-                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "xess");
-                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
-                    text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
-                }
-                else // GTX / Non-RTX
-                {
-                    text = UpdateIniKey(text, "Upscalers", "Dx12Upscaler", "ffx");
-                    text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
-                    text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
-                }
-
-                // Sharpness
-                text = UpdateIniKey(text, "Sharpness", "Shader", "lcda");
-                text = UpdateIniKey(text, "Sharpness", "OverrideSharpness", "true");
-                text = UpdateIniKey(text, "Sharpness", "Sharpness", "0.650000");
-
+                text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
+                text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
                 text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
             }
@@ -611,18 +433,13 @@ namespace NeuralPipelineStudio.Core
                 File.WriteAllText(bridgeCfgPath, text, Encoding.UTF8);
             }
 
-            // 5. Generate high-fidelity clean chain shaders
+            // 5. Generate shaders if shader dir exists
             string shaderDir = Path.Combine(gameDir, "reshade-shaders", "Shaders");
             if (Directory.Exists(shaderDir))
             {
                 ShaderGenerator.GenerateChainShaders(shaderDir, settings.PreChainCycles, settings.PostChainCycles, 
                                                     settings.DownscaleRatio, settings.UpscaleRatio, settings.VramAutoBalance);
-                string oldDll = Path.Combine(shaderDir, "nvngx.dll_dlssnr.dll");
-                try { if (File.Exists(oldDll)) File.Delete(oldDll); } catch { }
             }
-
-            string fakeAddon = Path.Combine(gameDir, "renodx-dlss5.addon64");
-            try { if (File.Exists(fakeAddon)) File.Delete(fakeAddon); } catch { }
 
             // 6. Save complete pipeline layers metadata
             try
@@ -634,17 +451,12 @@ namespace NeuralPipelineStudio.Core
             catch { }
         }
 
-        public static string UpdateIniKey(string text, string section, string key, string value)
+        private static string UpdateIniKey(string text, string section, string key, string value)
         {
             var pattern = $@"(\[{Regex.Escape(section)}\][\s\S]*?^\s*{Regex.Escape(key)}\s*=)[^\r\n]*";
             if (Regex.IsMatch(text, pattern, RegexOptions.Multiline))
             {
                 return Regex.Replace(text, pattern, $"$1 {value}", RegexOptions.Multiline);
-            }
-            var secPattern = $@"(\[{Regex.Escape(section)}\][\r\n]+)";
-            if (Regex.IsMatch(text, secPattern))
-            {
-                return Regex.Replace(text, secPattern, $"$1{key} = {value}\r\n");
             }
             return text;
         }

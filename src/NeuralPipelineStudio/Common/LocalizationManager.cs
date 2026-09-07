@@ -162,13 +162,13 @@ namespace NeuralPipelineStudio.Common
         {
             ["AppTitle"] = new()
             {
-                [AppLanguage.Italian] = "Neural Pipeline Studio v2.1 - Universal AAA Neural Rendering Suite",
-                [AppLanguage.English] = "Neural Pipeline Studio v2.1 - Universal AAA Neural Rendering Suite"
+                [AppLanguage.Italian] = "Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite",
+                [AppLanguage.English] = "Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite"
             },
             ["BrandingSub"] = new()
             {
-                [AppLanguage.Italian] = "Universal Fleet Edition v2.1",
-                [AppLanguage.English] = "Universal Fleet Edition v2.1"
+                [AppLanguage.Italian] = "Universal Fleet Edition v2.0",
+                [AppLanguage.English] = "Universal Fleet Edition v2.0"
             },
             ["NavHome"] = new()
             {

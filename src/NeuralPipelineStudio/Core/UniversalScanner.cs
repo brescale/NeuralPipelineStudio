@@ -408,7 +408,7 @@ namespace NeuralPipelineStudio.Core
                     installedFiles.Add("OptiScaler");
                 }
 
-                string[] addons = { "renodx-dlss.addon64", "nvngx.dll_dlssnr.dll" };
+                string[] addons = { "renodx-dlss5.addon64", "dlss5-bridge.addon64", "nvngx.dll_dlssnr.dll" };
                 foreach (var addon in addons)
                 {
                     string srcA = Path.Combine(sourceMasterDir, addon);
@@ -420,10 +420,6 @@ namespace NeuralPipelineStudio.Core
                     }
                 }
 
-                // Ensure any obsolete fake addon is cleaned up
-                string obsoleteFakeAddon = Path.Combine(targetGameDir, "renodx-dlss5.addon64");
-                if (File.Exists(obsoleteFakeAddon)) { try { File.Delete(obsoleteFakeAddon); } catch { } }
-
                 string[] configs = { "ReShade.ini", "ReShadePreset.ini", "OptiScaler.ini", "dlss5-bridge.cfg", "dlss5-feed.cfg" };
                 foreach (var cfg in configs)
                 {
@@ -434,46 +430,6 @@ namespace NeuralPipelineStudio.Core
                         installedFiles.Add(cfg);
                         log($"[INSTALL] Initialized Config: {cfg}");
                     }
-                }
-
-                // Auto-tune deployed OptiScaler.ini for detected API and GPU
-                string targetOptiIni = Path.Combine(targetGameDir, "OptiScaler.ini");
-                if (File.Exists(targetOptiIni))
-                {
-                    try
-                    {
-                        string iniText = File.ReadAllText(targetOptiIni);
-                        var hw = HardwareEngine.CurrentProfile;
-                        if (api == GraphicsApi.Vulkan)
-                        {
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Spoofing", "Dxgi", "false");
-                        }
-                        else
-                        {
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Spoofing", "Dxgi", "auto");
-                        }
-
-                        if (hw.SupportsTensorCores)
-                        {
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "Dx12Upscaler", "dlss");
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "VulkanUpscaler", "dlss");
-                            iniText = ConfigSync.UpdateIniKey(iniText, "DlssNr", "Enabled", "true");
-                        }
-                        else if (hw.GpuVendor == "AMD")
-                        {
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "Dx12Upscaler", "ffx");
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "VulkanUpscaler", "ffx");
-                            iniText = ConfigSync.UpdateIniKey(iniText, "DlssNr", "Enabled", "false");
-                        }
-                        else if (hw.GpuVendor == "Intel")
-                        {
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "Dx12Upscaler", "xess");
-                            iniText = ConfigSync.UpdateIniKey(iniText, "Upscalers", "VulkanUpscaler", "ffx");
-                            iniText = ConfigSync.UpdateIniKey(iniText, "DlssNr", "Enabled", "false");
-                        }
-                        File.WriteAllText(targetOptiIni, iniText, Encoding.UTF8);
-                    }
-                    catch { }
                 }
 
                 string dlssDir = PayloadManager.ResolveDlss5Directory();
@@ -538,7 +494,7 @@ namespace NeuralPipelineStudio.Core
                 filesToRemove.AddRange(new[]
                 {
                     "dxgi.dll", "d3d9.dll", "ReShade64.dll", "OptiScaler.dll", "winmm.dll",
-                    "renodx-dlss.addon64", "renodx-dlss5.addon64", "dlss5-bridge.addon64", "nvngx.dll_dlssnr.dll",
+                    "renodx-dlss5.addon64", "dlss5-bridge.addon64", "nvngx.dll_dlssnr.dll",
                     "ReShade.ini", "ReShadePreset.ini", "OptiScaler.ini", "dlss5-bridge.cfg", "dlss5-feed.cfg",
                     "upgrade_manifest.json", "reshade-shaders", "OptiScaler", "pipeline_layers.json"
                 });

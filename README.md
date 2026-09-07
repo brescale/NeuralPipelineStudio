@@ -1,6 +1,6 @@
-# ⚡ Neural Pipeline Studio v2.1
+# ⚡ Neural Pipeline Studio v2.0
 
-[![Release](https://img.shields.io/badge/Release-v2.1--beta-00E5FF.svg?style=for-the-badge&logo=github)](https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.1-beta)
+[![Release](https://img.shields.io/badge/Release-v2.0--beta-00E5FF.svg?style=for-the-badge&logo=github)](https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.0-beta)
 [![Target .NET](https://img.shields.io/badge/.NET-8.0_LTS-512BD4.svg?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
 [![Platform](https://img.shields.io/badge/Platform-Windows_x64-0078D4.svg?style=for-the-badge&logo=windows)](https://microsoft.com/)
 [![GPU Compatibility](https://img.shields.io/badge/GPU-Universal_RTX_%7C_GTX_%7C_Radeon_%7C_Arc-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white)](#gpu--hardware-compatibility)
@@ -8,9 +8,9 @@
 [![Language](https://img.shields.io/badge/Language-English_Default_%7C_Italiano-FFD700.svg?style=for-the-badge)](#localization)
 
 > [!IMPORTANT]
-> ## 🚀 Neural Pipeline Studio v2.1-beta — Universal Portable Release
+> ## 🚀 Neural Pipeline Studio v2.0-beta — Universal Portable Release
 >
-> ### **[👉 Click Here to Download NeuralPipelineStudio_v2.1_Portable.zip (570 MB) 👈](https://github.com/brescale/NeuralPipelineStudio/releases/download/v2.1-beta/NeuralPipelineStudio_v2.1_Portable.zip)**
+> ### **[👉 Click Here to Download NeuralPipelineStudio_v2.0_Portable.zip (570 MB) 👈](https://github.com/brescale/NeuralPipelineStudio/releases/download/v2.0-beta/NeuralPipelineStudio_v2.0_Portable.zip)**
 >
 > - **💎 Universal GPU Architecture**: 100% compatible with **NVIDIA GeForce** (RTX 40/30/20 & GTX 16/10), **AMD Radeon** (RX 7000/6000/5000 series via integrated OptiScaler FSR 3.1), and **Intel Arc** (A-Series via XeSS 1.3 bridge).
 > - **🎮 Multi-Game PC Fleet Scanner**: 1-click automated storage scanner detecting installed titles across **Steam**, **Xbox Game Pass**, **Epic Games Store**, and **GOG** on all drives.
@@ -63,7 +63,7 @@ Featuring a modern **Home-First architecture**, the studio automatically scans y
 
 ---
 
-## 🌟 Core Features in v2.1
+## 🌟 Core Features in v2.0
 
 ### 🏠 Universal Fleet Hub & PC Games Scanner
 - **Zero Configuration First Launch**: Opens directly to the interactive PC Games Library.
@@ -106,8 +106,8 @@ vngx.dll_dlssnr.dll), and runtime addons (enodx-dlss5.addon64, OptiScaler.dll).
 
 The production release is distributed as a **100% portable single-package release**:
 
-1. Go to the [Releases](https://github.com/brescale/NeuralPipelineStudio/releases) section on GitHub.
-2. Download **NeuralPipelineStudio_v2.1_Portable.zip** (~570 MB).
+1. Go to the [Releases](https://github.com/) section on GitHub.
+2. Download **NeuralPipelineStudio_v2.0_Portable.zip** (~570 MB).
 3. Extract the archive to any location (e.g. Desktop, games folder, or USB drive).
 4. Launch **NeuralPipelineStudio.exe**.
 
@@ -123,7 +123,7 @@ NeuralPipelineStudio/
 ├── .gitignore                    # Build and archive exclusions (GitHub safe)
 ├── LICENSE                       # MIT License
 ├── README.md                     # Comprehensive documentation & specification
-├── RELEASE_NOTES_v2.1.md         # Production release notes
+├── RELEASE_NOTES_v2.0.md         # Production release notes
 ├── Directory.Build.props         # Global solution properties
 ├── build.ps1                     # One-click automated build & package script
 ├── docs/                         # Architectural specifications
@@ -172,9 +172,9 @@ dotnet publish src/NeuralPipelineStudio/NeuralPipelineStudio.csproj -c Release -
 ## 🎬 Presentation Video Description & Showcase Caption
 
 ```text
-⚡ Neural Pipeline Studio v2.1 - Universal AAA Neural Rendering Suite (PC)
+⚡ Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite (PC)
 ========================================================================================
-🚀 Download Portable Release (Zero Install): https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.1-beta
+🚀 Download Portable Release (Zero Install): https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.0-beta
 
 Transform your PC gaming visuals with Neural Pipeline Studio — the all-in-one neural rendering workstation and multi-API injector!
 

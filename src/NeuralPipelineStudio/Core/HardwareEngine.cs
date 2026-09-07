@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -228,18 +228,16 @@ namespace NeuralPipelineStudio.Core
             {
                 case HardwareTier.Enthusiast: // 16GB - 24GB (RTX 4090, 4080)
                     s.DownscaleRatio = 0.75f;
-                    s.PreChainCycles = 1;
-                    s.PostChainCycles = 1;
+                    s.PreChainCycles = 15;
+                    s.PostChainCycles = 15;
                     s.NeuralPass1Iterations = 45;
-                    s.NeuralPass1Intensity = 1.0f;
-                    s.NeuralPass1DiffuseWhiteNits = 100.0f;
-                    s.SuperResolutionRatio = 1.5f;
+                    s.NeuralPass1Intensity = 2.4f;
+                    s.SuperResolutionRatio = 10.0f; // 1000%
                     s.DlssNrPasses = 20;
                     s.DlssNrTransferStrength = 1.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
-                    s.DlssNrLocalStructure = 1.0f;
-                    s.DlssNrSkinStructure = 1.0f;
-                    s.DlssNrIntensity = 1.0f;
+                    s.DlssNrWhitePointTrim = 1.2f;
+                    s.DlssNrLocalStructure = 1.3f;
+                    s.DlssNrSkinStructure = 1.1f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;
@@ -254,18 +252,16 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.HighEnd: // 10GB - 12GB (RTX 4070, 3080) - Target Locked
                     s.DownscaleRatio = 0.70f;
-                    s.PreChainCycles = 1;
-                    s.PostChainCycles = 1;
+                    s.PreChainCycles = 10;
+                    s.PostChainCycles = 10;
                     s.NeuralPass1Iterations = 30;
-                    s.NeuralPass1Intensity = 1.0f;
-                    s.NeuralPass1DiffuseWhiteNits = 100.0f;
-                    s.SuperResolutionRatio = 1.5f;
+                    s.NeuralPass1Intensity = 2.0f;
+                    s.SuperResolutionRatio = 9.0f; // 900%
                     s.DlssNrPasses = 15;
                     s.DlssNrTransferStrength = 1.0f;
                     s.DlssNrWhitePointTrim = 1.0f;
                     s.DlssNrLocalStructure = 1.0f;
                     s.DlssNrSkinStructure = 1.0f;
-                    s.DlssNrIntensity = 1.0f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;
@@ -280,18 +276,16 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.Mainstream: // 8GB (RTX 4060, 3070, RX 6700)
                     s.DownscaleRatio = 0.65f;
-                    s.PreChainCycles = 1;
-                    s.PostChainCycles = 1;
+                    s.PreChainCycles = 6;
+                    s.PostChainCycles = 6;
                     s.NeuralPass1Iterations = 18;
-                    s.NeuralPass1Intensity = 1.0f;
-                    s.NeuralPass1DiffuseWhiteNits = 100.0f;
-                    s.SuperResolutionRatio = 1.5f;
+                    s.NeuralPass1Intensity = 1.6f;
+                    s.SuperResolutionRatio = 6.0f; // 600%
                     s.DlssNrPasses = 10;
-                    s.DlssNrTransferStrength = 1.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
-                    s.DlssNrLocalStructure = 1.0f;
-                    s.DlssNrSkinStructure = 1.0f;
-                    s.DlssNrIntensity = 1.0f;
+                    s.DlssNrTransferStrength = 0.85f;
+                    s.DlssNrWhitePointTrim = 0.8f;
+                    s.DlssNrLocalStructure = 0.9f;
+                    s.DlssNrSkinStructure = 0.9f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = false; // Bypass to stay in 80-85% of 8GB
                     s.SssrEnabled = true;
@@ -304,18 +298,14 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.Entry: // 4GB - 6GB (RTX 3050, GTX 1660)
                     s.DownscaleRatio = 0.50f;
-                    s.PreChainCycles = 1;
-                    s.PostChainCycles = 1;
+                    s.PreChainCycles = 3;
+                    s.PostChainCycles = 3;
                     s.NeuralPass1Iterations = 10;
-                    s.NeuralPass1Intensity = 1.0f;
-                    s.NeuralPass1DiffuseWhiteNits = 100.0f;
-                    s.SuperResolutionRatio = 1.5f;
+                    s.NeuralPass1Intensity = 1.2f;
+                    s.SuperResolutionRatio = 4.0f; // 400%
                     s.DlssNrPasses = 6;
-                    s.DlssNrTransferStrength = 1.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
-                    s.DlssNrLocalStructure = 1.0f;
-                    s.DlssNrSkinStructure = 1.0f;
-                    s.DlssNrIntensity = 1.0f;
+                    s.DlssNrTransferStrength = 0.70f;
+                    s.DlssNrWhitePointTrim = 0.5f;
                     s.RtaoEnabled = false;
                     s.LsaoEnabled = false;
                     s.SssrEnabled = false;
@@ -328,15 +318,13 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.NonRtx: // AMD / Intel Arc / GTX
                     s.DownscaleRatio = 0.65f;
-                    s.PreChainCycles = 1;
-                    s.PostChainCycles = 1;
+                    s.PreChainCycles = 5;
+                    s.PostChainCycles = 5;
                     s.NeuralPass1Iterations = 15;
-                    s.NeuralPass1Intensity = 1.0f;
-                    s.NeuralPass1DiffuseWhiteNits = 100.0f;
-                    s.SuperResolutionRatio = 1.5f;
+                    s.NeuralPass1Intensity = 1.5f;
+                    s.SuperResolutionRatio = 6.0f;
                     s.DlssNrPasses = 8;
-                    s.DlssNrTransferStrength = 1.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
+                    s.DlssNrTransferStrength = 0.80f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = false;
                     s.SssrEnabled = true;

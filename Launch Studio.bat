@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title Neural Pipeline Studio v2.1 Launcher
+title Neural Pipeline Studio v2.0 Launcher
 
 :: 1. Check if executable exists in current folder
 if exist "%~dp0NeuralPipelineStudio.exe" (
@@ -9,11 +9,7 @@ if exist "%~dp0NeuralPipelineStudio.exe" (
     exit /b 0
 )
 
-:: 2. Check if portable package exe exists in dist (v2.1 or v2.0)
-if exist "%~dp0dist\NeuralPipelineStudio_v2.1_Portable\NeuralPipelineStudio.exe" (
-    start "" "%~dp0dist\NeuralPipelineStudio_v2.1_Portable\NeuralPipelineStudio.exe"
-    exit /b 0
-)
+:: 2. Check if portable package exe exists in dist
 if exist "%~dp0dist\NeuralPipelineStudio_v2.0_Portable\NeuralPipelineStudio.exe" (
     start "" "%~dp0dist\NeuralPipelineStudio_v2.0_Portable\NeuralPipelineStudio.exe"
     exit /b 0
@@ -51,11 +47,11 @@ echo You have downloaded the source code repository instead of the pre-compiled
 echo portable release.
 echo.
 echo To run the app immediately with zero configuration:
-echo 1. Download NeuralPipelineStudio_v2.1_Portable.zip from GitHub Releases:
-echo    https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.1-beta
+echo 1. Download NeuralPipelineStudio_v2.0_Portable.zip from GitHub Releases:
+echo    https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.0-beta
 echo.
 echo Opening the GitHub Releases download page now...
-start https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.1-beta
+start https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.0-beta
 echo.
 pause
 exit /b 1

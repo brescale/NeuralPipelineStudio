@@ -1,5 +1,5 @@
 ========================================================================================
-   NEURAL PIPELINE STUDIO v2.1 - PORTABLE HOME EDITION (MULTI-GAME & MULTI-PC)
+   NEURAL PIPELINE STUDIO v2.0 - PORTABLE HOME EDITION (MULTI-GAME & MULTI-PC)
 ========================================================================================
 
 This distribution is 100% self-contained, portable, and designed around a 'HOME-FIRST' workflow.
