@@ -1,7 +1,7 @@
 <Window x:Class="NeuralPipelineStudio.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite"
+        Title="Neural Pipeline Studio v2.1 - Universal AAA Neural Rendering Suite"
         Width="1180" Height="700" MinWidth="920" MinHeight="580"
         WindowStartupLocation="Manual"
         Background="{StaticResource BrushBgDark}"
@@ -20,7 +20,7 @@
                 <!-- Branding -->
                 <StackPanel DockPanel.Dock="Top" Margin="4,6,4,12">
                     <TextBlock Text="⚡ NEURAL STUDIO" FontSize="17" FontWeight="Bold" Foreground="{StaticResource BrushAccentCyan}"/>
-                    <TextBlock Text="Universal Fleet Edition v2.0" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" Margin="2,2,0,0"/>
+                    <TextBlock Text="Universal Fleet Edition v2.1" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" Margin="2,2,0,0"/>
                 </StackPanel>
 
                 <!-- System Hardware Profile Card at Bottom -->
