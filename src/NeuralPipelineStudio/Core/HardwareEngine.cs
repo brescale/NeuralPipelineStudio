@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -234,10 +234,11 @@ namespace NeuralPipelineStudio.Core
                     s.NeuralPass1Intensity = 2.4f;
                     s.SuperResolutionRatio = 10.0f; // 1000%
                     s.DlssNrPasses = 20;
-                    s.DlssNrTransferStrength = 1.0f;
-                    s.DlssNrWhitePointTrim = 1.2f;
-                    s.DlssNrLocalStructure = 1.3f;
-                    s.DlssNrSkinStructure = 1.1f;
+                    s.DlssNrTransferStrength = 2.0f;
+                    s.DlssNrWhitePointTrim = 4.0f;
+                    s.DlssNrLocalStructure = 2.0f;
+                    s.DlssNrSkinStructure = 2.0f;
+                    s.DlssNrIntensity = 4.0f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;
@@ -258,10 +259,11 @@ namespace NeuralPipelineStudio.Core
                     s.NeuralPass1Intensity = 2.0f;
                     s.SuperResolutionRatio = 9.0f; // 900%
                     s.DlssNrPasses = 15;
-                    s.DlssNrTransferStrength = 1.0f;
-                    s.DlssNrWhitePointTrim = 1.0f;
-                    s.DlssNrLocalStructure = 1.0f;
-                    s.DlssNrSkinStructure = 1.0f;
+                    s.DlssNrTransferStrength = 2.0f;
+                    s.DlssNrWhitePointTrim = 4.0f;
+                    s.DlssNrLocalStructure = 2.0f;
+                    s.DlssNrSkinStructure = 2.0f;
+                    s.DlssNrIntensity = 4.0f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;

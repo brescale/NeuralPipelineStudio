@@ -452,13 +452,26 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
+                // InitFlags
+                text = UpdateIniKey(text, "InitFlags", "AutoExposure", "true");
+
+                // DlssNr
+                text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
                 text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
-                text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "TransferStrength", "2.000000");
+                text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.300000");
+                text = UpdateIniKey(text, "DlssNr", "MaxRatio", "4.000000");
+                text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true");
+                text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
                 text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "WorkingScale", "1.500000");
+                text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");
+                text = UpdateIniKey(text, "DlssNr", "Style", "2");
                 text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
                 text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
                 text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");
+                text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");
                 text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
             }
@@ -497,6 +510,11 @@ namespace NeuralPipelineStudio.Core
             if (Regex.IsMatch(text, pattern, RegexOptions.Multiline))
             {
                 return Regex.Replace(text, pattern, $"$1 {value}", RegexOptions.Multiline);
+            }
+            var secPattern = $@"(\[{Regex.Escape(section)}\][\r\n]+)";
+            if (Regex.IsMatch(text, secPattern))
+            {
+                return Regex.Replace(text, secPattern, $"$1{key} = {value}\r\n");
             }
             return text;
         }
