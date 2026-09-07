@@ -427,6 +427,31 @@ namespace NeuralPipelineStudio.Core
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_SAMPLES", settings.MotionBlurSamples.ToString());
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_STRENGTH", settings.MotionBlurStrength.ToString("0.000000", CultureInfo.InvariantCulture));
 
+                // Calibrated Anamorphic Bloom (excl. skybox to stop blinding haze)
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_INTENSITY", "0.200000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_THRESHOLD", "0.880000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_STRETCH", "5.500000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_INTENSITY", "0.180000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_THRESHOLD", "0.900000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_SKIP_SKYBOX", "1");
+
+                // Calibrated Specular Reflections (SSSR)
+                text = UpdateIniKey(text, "lumenite_SSSR.fx", "ROUGHNESS", "0.250000");
+                text = UpdateIniKey(text, "lumenite_SSSR.fx", "F0", "0.040000");
+                text = UpdateIniKey(text, "lumenite_SSSR.fx", "BUMP_SCALE", "0.400000");
+                text = UpdateIniKey(text, "lumenite_SSSR.fx", "DEPTH_BOUNDARY", "20.000000");
+                text = UpdateIniKey(text, "lumenite_SSSR.fx", "TAIL_FEATHERING", "0.850000");
+
+                // Calibrated Ambient Occlusion
+                text = UpdateIniKey(text, "lumenite_RTAO.fx", "AO_INTENSITY", "1.000000");
+                text = UpdateIniKey(text, "lumenite_RTAO.fx", "DEPTH_BOUNDARY", "25.000000");
+                text = UpdateIniKey(text, "lumenite_LSAO.fx", "AO_INTENSITY", "0.750000");
+                text = UpdateIniKey(text, "lumenite_LSAO.fx", "DEPTH_BOUNDARY", "50.000000");
+
+                // Micro-contrast & Clarity
+                text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CONTRAST", "1.020000");
+                text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CLARITY", "0.150000");
+
                 File.WriteAllText(presetPath, text, Encoding.UTF8);
             }
             else
@@ -446,10 +471,23 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(reshadeIniPath))
             {
                 string text = File.ReadAllText(reshadeIniPath);
+                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteNits", settings.NeuralPass1DiffuseWhiteNits.ToString("0", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteOverride", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS", "DLSSAutoExposure", "0");
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingPassCount", settings.NeuralPass1Iterations.ToString());
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingIntensity", settings.NeuralPass1Intensity.ToString("0", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingIntensity", settings.NeuralPass1Intensity.ToString("0.0", CultureInfo.InvariantCulture));
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingStyle", settings.NeuralPass1Style.ToString());
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingGlobalToneStrength", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalToneStrength", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalStructureStrength", "2");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingSkinStructureStrength", "2");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingAutoMask", "1");
+
                 text = UpdateIniKey(text, "RenoDX.DLSS5", "NRDiffuseWhiteNits", settings.NeuralPass1DiffuseWhiteNits.ToString("0", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRGlobalTone", "1");
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalTone", "1");
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRIntensity", settings.NeuralPass1Intensity.ToString("0.0", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalStructure", "2.000000");
                 File.WriteAllText(reshadeIniPath, text, Encoding.UTF8);
             }
 
@@ -490,6 +528,9 @@ namespace NeuralPipelineStudio.Core
                     text = UpdateIniKey(text, "Spoofing", "Dxgi", "auto");
                 }
 
+                // Exposure & Contrast Control
+                text = UpdateIniKey(text, "InitFlags", "AutoExposure", "auto"); // Prevents unnatural blowout in physical lighting engines
+
                 // MULTI-GPU VENDOR HANDLING (NVIDIA RTX / GTX / AMD Radeon / Intel Arc)
                 if (hw.SupportsTensorCores) // NVIDIA RTX
                 {
@@ -504,7 +545,7 @@ namespace NeuralPipelineStudio.Core
                     text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color fidelity
                     text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
-                    text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
+                    text = UpdateIniKey(text, "DlssNr", "MaxRatio", "2.200000");         // Stops 8x brightness explosion, keeps specular highlights crisp
                     text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Auto exposure active
                     text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
                     text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
@@ -512,7 +553,7 @@ namespace NeuralPipelineStudio.Core
                     text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
                     text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
                     text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "LocalTone", "4.000000");        // Local tone max
+                    text = UpdateIniKey(text, "DlssNr", "LocalTone", "1.200000");        // Calibrated local tone mapping (prevents highlight clipping)
                     text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active
@@ -535,6 +576,11 @@ namespace NeuralPipelineStudio.Core
                     text = UpdateIniKey(text, "Upscalers", "VulkanUpscaler", "ffx");
                     text = UpdateIniKey(text, "DlssNr", "Enabled", "false");
                 }
+
+                // Sharpness
+                text = UpdateIniKey(text, "Sharpness", "Shader", "lcda");
+                text = UpdateIniKey(text, "Sharpness", "OverrideSharpness", "true");
+                text = UpdateIniKey(text, "Sharpness", "Sharpness", "0.650000");
 
                 text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
