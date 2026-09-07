@@ -428,11 +428,12 @@ namespace NeuralPipelineStudio.Core
                 text = UpdateIniKey(text, "lumenite_MotionBlur.fx", "BLUR_STRENGTH", settings.MotionBlurStrength.ToString("0.000000", CultureInfo.InvariantCulture));
 
                 // Calibrated Anamorphic Bloom (excl. skybox to stop blinding haze)
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_INTENSITY", "0.200000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_THRESHOLD", "0.880000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_STRETCH", "5.500000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_INTENSITY", "0.180000");
-                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_THRESHOLD", "0.900000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_INTENSITY", "0.080000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_THRESHOLD", "0.200000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_STRETCH", "4.000000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "BLOOM_SKIP_SKYBOX", "1");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_INTENSITY", "0.100000");
+                text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_THRESHOLD", "0.250000");
                 text = UpdateIniKey(text, "lumenite_AnamorphicBloom.fx", "STREAK_SKIP_SKYBOX", "1");
 
                 // Calibrated Specular Reflections (SSSR)
@@ -449,8 +450,12 @@ namespace NeuralPipelineStudio.Core
                 text = UpdateIniKey(text, "lumenite_LSAO.fx", "DEPTH_BOUNDARY", "50.000000");
 
                 // Micro-contrast & Clarity
-                text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CONTRAST", "1.020000");
+                text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CONTRAST", "1.000000");
                 text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CLARITY", "0.150000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_CONTRAST", "1.000000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_SHARPNESS", "0.250000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_CONTRAST", "1.000000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_SHARPNESS", "0.250000");
 
                 File.WriteAllText(presetPath, text, Encoding.UTF8);
             }
@@ -471,23 +476,27 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(reshadeIniPath))
             {
                 string text = File.ReadAllText(reshadeIniPath);
-                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteNits", settings.NeuralPass1DiffuseWhiteNits.ToString("0", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteOverride", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingEncoding", "0"); // Auto BT.709 colorspace
+                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteOverride", "0"); // Auto diffuse white (100 nits SDR)
+                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteNits", "100");
+                text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingUiCorrectionMode", "0");
                 text = UpdateIniKey(text, "RENODX-DLSS", "DLSSAutoExposure", "0");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingPassCount", settings.NeuralPass1Iterations.ToString());
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingIntensity", settings.NeuralPass1Intensity.ToString("0.0", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingStyle", settings.NeuralPass1Style.ToString());
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingPassCount", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingIntensity", "1.0");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingStyle", "0");
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingGlobalToneStrength", "1");
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalToneStrength", "1");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalStructureStrength", "2");
-                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingSkinStructureStrength", "2");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalStructureStrength", "1");
+                text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingSkinStructureStrength", "1");
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingAutoMask", "1");
 
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRDiffuseWhiteNits", settings.NeuralPass1DiffuseWhiteNits.ToString("0", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRDiffuseWhiteNits", "100");
                 text = UpdateIniKey(text, "RenoDX.DLSS5", "NRGlobalTone", "1");
                 text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalTone", "1");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRIntensity", settings.NeuralPass1Intensity.ToString("0.0", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalStructure", "2.000000");
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRIntensity", "1.0");
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalStructure", "1.000000");
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRSkinStructure", "1");
+                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRStyle", "0");
                 File.WriteAllText(reshadeIniPath, text, Encoding.UTF8);
             }
 
@@ -545,15 +554,15 @@ namespace NeuralPipelineStudio.Core
                     text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color fidelity
                     text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
-                    text = UpdateIniKey(text, "DlssNr", "MaxRatio", "2.200000");         // Stops 8x brightness explosion, keeps specular highlights crisp
-                    text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Auto exposure active
+                    text = UpdateIniKey(text, "DlssNr", "MaxRatio", "1.500000");         // Strictly caps luminance boost to 1.5x, eliminating all blown out ceilings
+                    text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "false"); // Directly sample real frame luminance without engine exposure division
                     text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
                     text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "WorkingScale", "auto");         // Model resolution adaptive to FPS
                     text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
                     text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
                     text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                    text = UpdateIniKey(text, "DlssNr", "LocalTone", "1.200000");        // Calibrated local tone mapping (prevents highlight clipping)
+                    text = UpdateIniKey(text, "DlssNr", "LocalTone", "1.000000");        // 1:1 neutral tone mapping (no white ceiling clipping)
                     text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
                     text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active

@@ -78,21 +78,31 @@ namespace NeuralPipelineStudio.Core
             sb.AppendLine("}");
             sb.AppendLine();
 
-            sb.AppendLine("// Upscale Filter: 600% Catmull-Rom Bicubic Spline");
+            sb.AppendLine("// Upscale Filter: Pure Luminance-Conserving Catmull-Rom Spline");
             sb.AppendLine($"float4 PS_CatmullRom_{prefix}(float4 vpos : SV_Position, float2 uv : TEXCOORD, sampler sInput) : SV_Target");
             sb.AppendLine("{");
             sb.AppendLine("    float2 pos = uv * float2(DOWN_WIDTH, DOWN_HEIGHT) - 0.5;");
             sb.AppendLine("    float2 f = frac(pos);");
             sb.AppendLine("    float2 tc = (pos - f + 0.5) * DOWN_TEXEL;");
-            sb.AppendLine("    float2 w0 = f * (-0.5 + f * (1.0 - 0.5 * f));");
             sb.AppendLine("    float2 w1 = 1.0 + f * f * (-2.5 + 1.5 * f);");
             sb.AppendLine("    float2 w2 = f * (0.5 + f * (2.0 - 1.5 * f));");
-            sb.AppendLine("    float2 w3 = f * f * (-0.5 + 0.5 * f);");
-            sb.AppendLine("    float2 w12 = w1 + w2;");
+            sb.AppendLine("    float2 w12 = max(w1 + w2, 0.0001);");
             sb.AppendLine("    float2 tc12 = tc + (w2 / w12) * DOWN_TEXEL;");
-            sb.AppendLine("    float4 color = tex2D(sInput, float2(tc12.x, tc12.y)) * (w12.x * w12.y);");
+            sb.AppendLine("    return tex2D(sInput, tc12);");
+            sb.AppendLine("}");
+            sb.AppendLine();
+            sb.AppendLine($"float4 PS_CatmullRom_{prefix}_Final(float4 vpos : SV_Position, float2 uv : TEXCOORD, sampler sInput) : SV_Target");
+            sb.AppendLine("{");
+            sb.AppendLine("    float2 pos = uv * float2(DOWN_WIDTH, DOWN_HEIGHT) - 0.5;");
+            sb.AppendLine("    float2 f = frac(pos);");
+            sb.AppendLine("    float2 tc = (pos - f + 0.5) * DOWN_TEXEL;");
+            sb.AppendLine("    float2 w1 = 1.0 + f * f * (-2.5 + 1.5 * f);");
+            sb.AppendLine("    float2 w2 = f * (0.5 + f * (2.0 - 1.5 * f));");
+            sb.AppendLine("    float2 w12 = max(w1 + w2, 0.0001);");
+            sb.AppendLine("    float2 tc12 = tc + (w2 / w12) * DOWN_TEXEL;");
+            sb.AppendLine("    float4 color = tex2D(sInput, tc12);");
             sb.AppendLine("    float4 sharp = tex2D(sInput, uv);");
-            sb.AppendLine("    color = lerp(color, sharp, CYCLE_SHARPNESS * 0.4);");
+            sb.AppendLine("    color = lerp(color, sharp, saturate(CYCLE_SHARPNESS * 0.25));");
             sb.AppendLine("    color.rgb = lerp(float3(0.5, 0.5, 0.5), color.rgb, CYCLE_CONTRAST);");
             sb.AppendLine("    return color;");
             sb.AppendLine("}");
@@ -105,9 +115,10 @@ namespace NeuralPipelineStudio.Core
                 string downDst = $"TexDown{((i % 2 == 0) ? "A" : "B")}_{prefix}";
                 string upSrc = $"sDown{((i % 2 == 0) ? "A" : "B")}_{prefix}";
                 string upDst = (i == cycles - 1) ? "" : $"TexFull{((i % 2 == 0) ? "A" : "B")}_{prefix}";
+                string upFunc = (i == cycles - 1) ? $"PS_CatmullRom_{prefix}_Final" : $"PS_CatmullRom_{prefix}";
 
                 sb.AppendLine($"float4 PS_Down_{prefix}_{i}(float4 p : SV_Position, float2 uv : TEXCOORD) : SV_Target {{ return PS_Downscale_{prefix}(p, uv, {downSrc}); }}");
-                sb.AppendLine($"float4 PS_Up_{prefix}_{i}(float4 p : SV_Position, float2 uv : TEXCOORD) : SV_Target {{ return PS_CatmullRom_{prefix}(p, uv, {upSrc}); }}");
+                sb.AppendLine($"float4 PS_Up_{prefix}_{i}(float4 p : SV_Position, float2 uv : TEXCOORD) : SV_Target {{ return {upFunc}(p, uv, {upSrc}); }}");
             }
             sb.AppendLine();
 
