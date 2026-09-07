@@ -414,11 +414,19 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
-                text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
+                text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
+                text = UpdateIniKey(text, "DlssNr", "Passes", "auto");
                 text = UpdateIniKey(text, "DlssNr", "TransferStrength", settings.DlssNrTransferStrength.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.150000");
+                text = UpdateIniKey(text, "DlssNr", "WorkingScale", "0.850000");
+                text = UpdateIniKey(text, "DlssNr", "MaxRatio", settings.SuperResolutionRatio.ToString("0.000000", CultureInfo.InvariantCulture));
                 text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "LocalTone", "2.000000");
+                text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "Preset", "1");
+                text = UpdateIniKey(text, "DlssNr", "Style", "1");
+                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideEnabled", "true");
                 text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
             }

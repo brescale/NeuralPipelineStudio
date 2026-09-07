@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -250,18 +250,19 @@ namespace NeuralPipelineStudio.Core
                     s.VramTargetPercent = 82.5f;
                     break;
 
-                case HardwareTier.HighEnd: // 10GB - 12GB (RTX 4070, 3080) - Target Locked
-                    s.DownscaleRatio = 0.70f;
-                    s.PreChainCycles = 10;
-                    s.PostChainCycles = 10;
+                case HardwareTier.HighEnd: // 10GB - 12GB (RTX 4070, 3080) - Golden Visual Baseline
+                    s.DownscaleRatio = 0.80f;
+                    s.PreChainCycles = 1;
+                    s.PostChainCycles = 1;
                     s.NeuralPass1Iterations = 30;
                     s.NeuralPass1Intensity = 2.0f;
-                    s.SuperResolutionRatio = 9.0f; // 900%
-                    s.DlssNrPasses = 15;
-                    s.DlssNrTransferStrength = 1.0f;
+                    s.SuperResolutionRatio = 2.5f;
+                    s.DlssNrPasses = 1;
+                    s.DlssNrTransferStrength = 1.65f;
                     s.DlssNrWhitePointTrim = 1.0f;
-                    s.DlssNrLocalStructure = 1.0f;
-                    s.DlssNrSkinStructure = 1.0f;
+                    s.DlssNrLocalStructure = 2.8f;
+                    s.DlssNrSkinStructure = 2.5f;
+                    s.DlssNrIntensity = 1.95f;
                     s.RtaoEnabled = true;
                     s.LsaoEnabled = true;
                     s.SssrEnabled = true;
