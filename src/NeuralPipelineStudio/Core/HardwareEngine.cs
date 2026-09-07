@@ -228,8 +228,8 @@ namespace NeuralPipelineStudio.Core
             {
                 case HardwareTier.Enthusiast: // 16GB - 24GB (RTX 4090, 4080)
                     s.DownscaleRatio = 0.75f;
-                    s.PreChainCycles = 15;
-                    s.PostChainCycles = 15;
+                    s.PreChainCycles = 1;
+                    s.PostChainCycles = 1;
                     s.NeuralPass1Iterations = 45;
                     s.NeuralPass1Intensity = 1.0f;
                     s.NeuralPass1DiffuseWhiteNits = 100.0f;
@@ -254,8 +254,8 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.HighEnd: // 10GB - 12GB (RTX 4070, 3080) - Target Locked
                     s.DownscaleRatio = 0.70f;
-                    s.PreChainCycles = 10;
-                    s.PostChainCycles = 10;
+                    s.PreChainCycles = 1;
+                    s.PostChainCycles = 1;
                     s.NeuralPass1Iterations = 30;
                     s.NeuralPass1Intensity = 1.0f;
                     s.NeuralPass1DiffuseWhiteNits = 100.0f;
@@ -280,8 +280,8 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.Mainstream: // 8GB (RTX 4060, 3070, RX 6700)
                     s.DownscaleRatio = 0.65f;
-                    s.PreChainCycles = 6;
-                    s.PostChainCycles = 6;
+                    s.PreChainCycles = 1;
+                    s.PostChainCycles = 1;
                     s.NeuralPass1Iterations = 18;
                     s.NeuralPass1Intensity = 1.0f;
                     s.NeuralPass1DiffuseWhiteNits = 100.0f;
@@ -304,8 +304,8 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.Entry: // 4GB - 6GB (RTX 3050, GTX 1660)
                     s.DownscaleRatio = 0.50f;
-                    s.PreChainCycles = 3;
-                    s.PostChainCycles = 3;
+                    s.PreChainCycles = 1;
+                    s.PostChainCycles = 1;
                     s.NeuralPass1Iterations = 10;
                     s.NeuralPass1Intensity = 1.0f;
                     s.NeuralPass1DiffuseWhiteNits = 100.0f;
@@ -328,8 +328,8 @@ namespace NeuralPipelineStudio.Core
 
                 case HardwareTier.NonRtx: // AMD / Intel Arc / GTX
                     s.DownscaleRatio = 0.65f;
-                    s.PreChainCycles = 5;
-                    s.PostChainCycles = 5;
+                    s.PreChainCycles = 1;
+                    s.PostChainCycles = 1;
                     s.NeuralPass1Iterations = 15;
                     s.NeuralPass1Intensity = 1.0f;
                     s.NeuralPass1DiffuseWhiteNits = 100.0f;

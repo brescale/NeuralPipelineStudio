@@ -35,21 +35,21 @@ namespace NeuralPipelineStudio.Core
                 new PipelineLayer 
                 { 
                     Id = "pre_chain", 
-                    Name = $"{s.PreChainCycles}x Ping-Pong Rescale Loop (Downscale {s.DownscaleRatio:F2}x ⇄ Upscale {s.UpscaleRatioOverrideValue}x)", 
+                    Name = $"{s.PreChainCycles}x Pre-Neural Resolution & Fidelity Chain", 
                     TechniqueName = "Lumenite_IterativeDownUpChain_Pre", 
                     ShaderFile = "lumenite_IterativeDownUpChain_Pre.fx", 
-                    Category = "Ping-Pong Rescale", 
+                    Category = "Pre-Downscale", 
                     Enabled = true, 
                     AccentColorHex = "#00F0FF", 
                     LoopCycles = s.PreChainCycles,
-                    ScaleMode = "Ping-Pong (Down ⇄ Up)",
+                    ScaleMode = "High-Fidelity Spline",
                     DownscaleRatio = s.DownscaleRatio,
-                    UpscaleRatio = float.TryParse(s.UpscaleRatioOverrideValue, NumberStyles.Float, CultureInfo.InvariantCulture, out float uVal) ? uVal : 1.428571f,
-                    UpscaleModel = "DLSS 4/4.5 (nvngx_dlss.dll)",
+                    UpscaleRatio = s.UpscaleRatio,
+                    UpscaleModel = "Catmull-Rom Bicubic Spline",
                     DllModelName = "nvngx_dlss.dll",
-                    AddonName = "renodx-dlss5.addon64",
+                    AddonName = "ReShade64.dll",
                     Intensity = 1.0f,
-                    Description = $"{s.PreChainCycles} cicli alternati Ping-Pong sul buffer pre-filtrato: Downscale {s.DownscaleRatio:F2}x ({s.DownscaleRatio * 100:F0}%) -> ReShade intermedio -> Upscale {s.UpscaleRatioOverrideValue}x con modello neurale (Calibrato per {profile.GpuName})" 
+                    Description = "Campionamento ad alta fedelta e pre-condizionamento nitidezza pre-upscale in pass diretto senza rimasticamento" 
                 },
                 new PipelineLayer 
                 { 
@@ -88,8 +88,8 @@ namespace NeuralPipelineStudio.Core
                     Category = "Neural Engine", 
                     Enabled = true, 
                     AccentColorHex = "#9C27B0", 
-                    DllModelName = "renodx-dlss5.addon64",
-                    AddonName = "renodx-dlss5.addon64",
+                    DllModelName = "renodx-dlss.addon64",
+                    AddonName = "renodx-dlss.addon64",
                     LoopCycles = 1,
                     NeuralPassIterations = s.NeuralPass1Iterations,
                     Intensity = s.NeuralPass1Intensity,
@@ -127,7 +127,7 @@ namespace NeuralPipelineStudio.Core
                     NeuralPassIterations = s.DlssNrPasses,
                     Intensity = s.DlssNrTransferStrength,
                     DllModelName = "nvngx.dll_dlssnr.dll",
-                    AddonName = "renodx-dlss5.addon64",
+                    AddonName = "OptiScaler.dll",
                     Description = $"Denoising neurale a {s.DlssNrPasses} passaggi con layer 100% sintetizzato, skin structure {s.DlssNrSkinStructure:F1}x" 
                 },
                 new PipelineLayer 
@@ -184,7 +184,7 @@ namespace NeuralPipelineStudio.Core
                     Enabled = s.BloomEnabled, 
                     AccentColorHex = "#FF5722", 
                     DllModelName = "sl.deepdvc.dll",
-                    AddonName = "renodx-dlss5.addon64",
+                    AddonName = "ReShade64.dll",
                     LoopCycles = 1,
                     Description = "Diffrazione ottica anamorfica e dispersione spettrale delle luci ad alta luminanza" 
                 },
@@ -197,9 +197,9 @@ namespace NeuralPipelineStudio.Core
                     Category = "Post-Neural", 
                     Enabled = s.TraaEnabled, 
                     AccentColorHex = "#8BC34A", 
-                    DllModelName = "sl.dlss.dll",
-                    AddonName = "ReShade64.dll",
-                    LoopCycles = 1,
+                    DllModelName = "sl.dlss.dll", 
+                    AddonName = "ReShade64.dll", 
+                    LoopCycles = 1, 
                     Description = "Antialiasing di rifinitura con accumulo temporale sub-pixel" 
                 },
                 new PipelineLayer 
@@ -211,31 +211,31 @@ namespace NeuralPipelineStudio.Core
                     Category = "Post-Neural", 
                     Enabled = s.MotionBlurEnabled, 
                     AccentColorHex = "#CDDC39", 
-                    DllModelName = "nvngx_dlssg.dll",
-                    AddonName = "OptiScaler.dll",
-                    LoopCycles = 1,
+                    DllModelName = "nvngx_dlssg.dll", 
+                    AddonName = "OptiScaler.dll", 
+                    LoopCycles = 1, 
                     Description = s.MotionBlurEnabled 
-                        ? $"Sfuocatura cinematografica a {s.MotionBlurSamples} campioni guidata dal velocity buffer"
+                        ? $"Sfuocatura cinematografica a {s.MotionBlurSamples} campioni guidata dal velocity buffer" 
                         : "Bypassata per preservare frame-rate e budget memoria" 
                 },
                 new PipelineLayer 
                 { 
                     Id = "post_chain", 
-                    Name = $"{s.PostChainCycles}x Post-Neural Ping-Pong Fidelity & Sharpening", 
+                    Name = $"{s.PostChainCycles}x Post-Neural Output Fidelity & Sharpening", 
                     TechniqueName = "Lumenite_IterativeDownUpChain", 
                     ShaderFile = "lumenite_IterativeDownUpChain.fx", 
-                    Category = "Post-Chain Ping-Pong", 
+                    Category = "Post-Chain", 
                     Enabled = true, 
                     AccentColorHex = "#00F0FF", 
                     LoopCycles = s.PostChainCycles,
-                    ScaleMode = "Ping-Pong (Down ⇄ Up)",
+                    ScaleMode = "High-Fidelity Spline",
                     DownscaleRatio = 0.85f,
                     UpscaleRatio = 1.18f,
-                    UpscaleModel = "Catmull-Rom 600% Spline",
+                    UpscaleModel = "Catmull-Rom Bicubic Spline",
                     DllModelName = "sl.nis.dll",
                     AddonName = "ReShade64.dll",
                     Intensity = 1.0f,
-                    Description = $"{s.PostChainCycles} cicli alternati finali: Downscale 0.85x -> filtraggio ReShade -> Upscale 1.18x per consolidamento contrasto (Calibrato per {profile.GpuName})" 
+                    Description = "Consolidamento contrasto e nitidezza con spline bicubica Catmull-Rom in pass diretto ad alta fedelta" 
                 }
             };
         }
@@ -259,6 +259,13 @@ namespace NeuralPipelineStudio.Core
                     var loaded = System.Text.Json.JsonSerializer.Deserialize<List<PipelineLayer>>(json);
                     if (loaded != null && loaded.Count > 0)
                     {
+                        foreach (var l in loaded)
+                        {
+                            if (l.AddonName == "renodx-dlss5.addon64") l.AddonName = "renodx-dlss.addon64";
+                            if (l.DllModelName == "renodx-dlss5.addon64") l.DllModelName = "renodx-dlss.addon64";
+                            if (l.Id == "pre_chain" && l.AddonName == "renodx-dlss.addon64") l.AddonName = "ReShade64.dll";
+                        }
+
                         layers = loaded;
                         // Auto-associate dedicated Shader, DLL Model, and Addon if missing or empty, preserving 100% of user settings!
                         var defaultRef = GetDefaultPipeline(profile);
@@ -452,9 +459,13 @@ namespace NeuralPipelineStudio.Core
                 // Micro-contrast & Clarity
                 text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CONTRAST", "1.000000");
                 text = UpdateIniKey(text, "lumenite_Pre_Stack.fx", "PRE_CLARITY", "0.150000");
+
+                // Pre & Post High-Fidelity Spline & Sharpening
                 text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_CONTRAST", "1.000000");
-                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_SHARPNESS", "0.250000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_CLARITY", "0.150000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain_Pre.fx", "CYCLE_SHARPNESS", "0.200000");
                 text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_CONTRAST", "1.000000");
+                text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_CLARITY", "0.100000");
                 text = UpdateIniKey(text, "lumenite_IterativeDownUpChain.fx", "CYCLE_SHARPNESS", "0.250000");
 
                 File.WriteAllText(presetPath, text, Encoding.UTF8);
@@ -476,6 +487,9 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(reshadeIniPath))
             {
                 string text = File.ReadAllText(reshadeIniPath);
+                // Strip obsolete RenoDX.DLSS5 section if present
+                text = Regex.Replace(text, @"\[RenoDX\.DLSS5\][\s\S]*?(?=(\r?\n\[|\Z))", "", RegexOptions.Multiline);
+
                 text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingEncoding", "0"); // Auto BT.709 colorspace
                 text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteOverride", "0"); // Auto diffuse white (100 nits SDR)
                 text = UpdateIniKey(text, "RENODX-DLSS", "DirectNeuralRenderingDiffuseWhiteNits", "100");
@@ -489,14 +503,6 @@ namespace NeuralPipelineStudio.Core
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingLocalStructureStrength", "1");
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingSkinStructureStrength", "1");
                 text = UpdateIniKey(text, "RENODX-DLSS-preset1", "DirectNeuralRenderingAutoMask", "1");
-
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRDiffuseWhiteNits", "100");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRGlobalTone", "1");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalTone", "1");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRIntensity", "1.0");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRLocalStructure", "1.000000");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRSkinStructure", "1");
-                text = UpdateIniKey(text, "RenoDX.DLSS5", "NRStyle", "0");
                 File.WriteAllText(reshadeIniPath, text, Encoding.UTF8);
             }
 
@@ -605,13 +611,18 @@ namespace NeuralPipelineStudio.Core
                 File.WriteAllText(bridgeCfgPath, text, Encoding.UTF8);
             }
 
-            // 5. Generate shaders if shader dir exists
+            // 5. Generate high-fidelity clean chain shaders
             string shaderDir = Path.Combine(gameDir, "reshade-shaders", "Shaders");
             if (Directory.Exists(shaderDir))
             {
                 ShaderGenerator.GenerateChainShaders(shaderDir, settings.PreChainCycles, settings.PostChainCycles, 
                                                     settings.DownscaleRatio, settings.UpscaleRatio, settings.VramAutoBalance);
+                string oldDll = Path.Combine(shaderDir, "nvngx.dll_dlssnr.dll");
+                try { if (File.Exists(oldDll)) File.Delete(oldDll); } catch { }
             }
+
+            string fakeAddon = Path.Combine(gameDir, "renodx-dlss5.addon64");
+            try { if (File.Exists(fakeAddon)) File.Delete(fakeAddon); } catch { }
 
             // 6. Save complete pipeline layers metadata
             try

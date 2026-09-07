@@ -94,11 +94,11 @@ namespace NeuralPipelineStudio.Core
 
             string[] knownShaders = new[]
             {
-                "lumenite_IterativeDownUpChain_Pre.fx",
                 "lumenite_Pre_Stack.fx",
+                "lumenite_IterativeDownUpChain_Pre.fx",
                 "lumenite_Kernel.fx",
                 "DLSS5_Feed.fx",
-                "RenoDX_DLSS5",
+                "RenoDX_DLSS",
                 "OptiScaler_DLSS",
                 "OptiScaler_DLSSNR",
                 "lumenite_RTAO.fx",
@@ -140,7 +140,6 @@ namespace NeuralPipelineStudio.Core
         {
             var addons = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                "renodx-dlss5.addon64",
                 "renodx-dlss.addon64",
                 "OptiScaler.dll",
                 "ReShade64.dll",
@@ -263,7 +262,7 @@ namespace NeuralPipelineStudio.Core
                     ShaderFile = "OptiScaler_DLSSNR",
                     Category = "Neural Engine",
                     DllModelName = models.FirstOrDefault(m => m.FileName.Contains("dlssnr"))?.FileName ?? "nvngx.dll_dlssnr.dll",
-                    AddonName = "renodx-dlss5.addon64",
+                    AddonName = "OptiScaler.dll",
                     ScaleMode = "None",
                     Intensity = 1.0f,
                     LoopCycles = 15,
@@ -273,34 +272,17 @@ namespace NeuralPipelineStudio.Core
                 new PipelineLayer
                 {
                     Id = "renodx_tensor",
-                    Name = "RenoDX DLSS5 HDR Tensor Engine (renodx-dlss5.addon64)",
+                    Name = "RenoDX DLSS HDR Tensor Engine (renodx-dlss.addon64)",
                     TechniqueName = "Neural_Pass_1_RenoDX",
-                    ShaderFile = "RenoDX_DLSS5",
+                    ShaderFile = "RenoDX_DLSS",
                     Category = "Neural Engine",
-                    DllModelName = models.FirstOrDefault(m => m.FileName.Contains("renodx"))?.FileName ?? "renodx-dlss5.addon64",
-                    AddonName = "renodx-dlss5.addon64",
+                    DllModelName = models.FirstOrDefault(m => m.FileName.Contains("renodx"))?.FileName ?? "renodx-dlss.addon64",
+                    AddonName = "renodx-dlss.addon64",
                     ScaleMode = "None",
-                    Intensity = 2.0f,
-                    LoopCycles = 30,
+                    Intensity = 1.0f,
+                    LoopCycles = 1,
                     AccentColorHex = "#9C27B0",
                     Description = "1° Neural Pass RenoDX tensor engine with enhanced volumetric illumination"
-                },
-                new PipelineLayer
-                {
-                    Id = "pre_downscale_chain",
-                    Name = "Ping-Pong Rescale Loop (Downscale 0.70x ⇄ Upscale 1.42x)",
-                    TechniqueName = "Lumenite_IterativeDownUpChain_Pre",
-                    ShaderFile = "lumenite_IterativeDownUpChain_Pre.fx",
-                    Category = "Ping-Pong Rescale",
-                    ScaleMode = "Ping-Pong (Down ⇄ Up)",
-                    DownscaleRatio = 0.70f,
-                    UpscaleRatio = 1.428571f,
-                    UpscaleModel = "DLSS 4/4.5 (nvngx_dlss.dll)",
-                    DllModelName = "nvngx_dlss.dll",
-                    AddonName = "renodx-dlss5.addon64",
-                    LoopCycles = 10,
-                    AccentColorHex = "#00F0FF",
-                    Description = "Ciclo iterativo Ping-Pong alternato tra Downscale (0.70x) e Upscale (1.42x o DLSS) con riciclo buffer"
                 },
                 new PipelineLayer
                 {
@@ -314,6 +296,23 @@ namespace NeuralPipelineStudio.Core
                     LoopCycles = 1,
                     AccentColorHex = "#4CAF50",
                     Description = "Preserva micro-contrasto e bordi geometrici ad alta frequenza prima del downscaling"
+                },
+                new PipelineLayer
+                {
+                    Id = "pre_downscale_chain",
+                    Name = "Lumenite Pre-Neural Resolution & Fidelity Chain",
+                    TechniqueName = "Lumenite_IterativeDownUpChain_Pre",
+                    ShaderFile = "lumenite_IterativeDownUpChain_Pre.fx",
+                    Category = "Pre-Downscale",
+                    ScaleMode = "High-Fidelity Spline",
+                    DownscaleRatio = 0.70f,
+                    UpscaleRatio = 1.428571f,
+                    UpscaleModel = "Catmull-Rom Bicubic Spline",
+                    DllModelName = "nvngx_dlss.dll",
+                    AddonName = "ReShade64.dll",
+                    LoopCycles = 1,
+                    AccentColorHex = "#00F0FF",
+                    Description = "Campionamento ad alta fedelta e pre-condizionamento nitidezza pre-upscale in pass diretto senza rimasticamento"
                 },
                 new PipelineLayer
                 {
@@ -375,7 +374,7 @@ namespace NeuralPipelineStudio.Core
                     ShaderFile = "sl.deepdvc.dll",
                     Category = "Color & Vibrance",
                     DllModelName = "sl.deepdvc.dll",
-                    AddonName = "renodx-dlss5.addon64",
+                    AddonName = "renodx-dlss.addon64",
                     LoopCycles = 1,
                     AccentColorHex = "#E91E63",
                     Description = "Deep dynamic range clarity and local tone curve optimization"
@@ -427,7 +426,7 @@ namespace NeuralPipelineStudio.Core
                     ShaderFile = "lumenite_AnamorphicBloom.fx",
                     Category = "Post-Neural",
                     DllModelName = "sl.deepdvc.dll",
-                    AddonName = "renodx-dlss5.addon64",
+                    AddonName = "ReShade64.dll",
                     LoopCycles = 1,
                     AccentColorHex = "#FF5722",
                     Description = "Diffrazione ottica anamorfica e dispersione spettrale delle luci"
@@ -461,17 +460,17 @@ namespace NeuralPipelineStudio.Core
                 new PipelineLayer
                 {
                     Id = "post_neural_chain",
-                    Name = "Post-Neural Output Iterative Chain (10x Cycles)",
+                    Name = "Lumenite Post-Neural Output Fidelity & Sharpening",
                     TechniqueName = "Lumenite_IterativeDownUpChain",
                     ShaderFile = "lumenite_IterativeDownUpChain.fx",
                     Category = "Post-Chain",
                     DllModelName = "sl.nis.dll",
                     AddonName = "ReShade64.dll",
-                    ScaleMode = "Upscale",
-                    ScaleRatio = 6.0f,
-                    LoopCycles = 10,
+                    ScaleMode = "High-Fidelity Spline",
+                    ScaleRatio = 1.0f,
+                    LoopCycles = 1,
                     AccentColorHex = "#00F0FF",
-                    Description = "Post-neural contrast and sharpness consolidation chain"
+                    Description = "Consolidamento contrasto e nitidezza con spline bicubica Catmull-Rom in pass diretto ad alta fedelta"
                 },
                 new PipelineLayer
                 {

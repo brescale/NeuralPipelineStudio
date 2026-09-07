@@ -28,8 +28,8 @@ namespace NeuralPipelineStudio.Models
         public bool DlssNrUseProxy { get; set; } = true;
 
         // Iterative Downscale / Upscale Chains
-        public int PreChainCycles { get; set; } = 10;
-        public int PostChainCycles { get; set; } = 10;
+        public int PreChainCycles { get; set; } = 1;
+        public int PostChainCycles { get; set; } = 1;
         public float DownscaleRatio { get; set; } = 0.70f;
         public float UpscaleRatio { get; set; } = 1.428571f;
         public float PreContrast { get; set; } = 1.00f;

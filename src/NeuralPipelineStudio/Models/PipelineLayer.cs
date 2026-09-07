@@ -17,7 +17,7 @@ namespace NeuralPipelineStudio.Models
         // Dedicated per-item parameters (individually editable even if duplicated)
         public int LoopCycles { get; set; } = 1;
         public string DllModelName { get; set; } = string.Empty;
-        public string AddonName { get; set; } = string.Empty; // "renodx-dlss5.addon64", "OptiScaler.dll", "ReShade64.dll", etc.
+        public string AddonName { get; set; } = string.Empty; // "renodx-dlss.addon64", "OptiScaler.dll", "ReShade64.dll", etc.
         public string ScaleMode { get; set; } = "None"; // "Ping-Pong (Down ⇄ Up)", "Downscale", "Upscale", "DLSS Super Resolution", "DLAA", "None"
         public float ScaleRatio { get; set; } = 1.0f;
         public float DownscaleRatio { get; set; } = 0.70f;

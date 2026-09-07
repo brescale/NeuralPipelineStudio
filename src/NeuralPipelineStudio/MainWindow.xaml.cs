@@ -278,7 +278,7 @@ namespace NeuralPipelineStudio
                 cbLayerUpscaleModel.Items.Add("DLSS 4/4.5 (nvngx_dlss.dll)");
                 cbLayerUpscaleModel.Items.Add("DLSS Ray Reconstruction (sl.dlss_d.dll)");
                 cbLayerUpscaleModel.Items.Add("DLSS-NR Neural Reconstruction (nvngx.dll_dlssnr.dll)");
-                cbLayerUpscaleModel.Items.Add("RenoDX HDR Tensor Upscaler (renodx-dlss5.addon64)");
+                cbLayerUpscaleModel.Items.Add("RenoDX HDR Tensor Upscaler (renodx-dlss.addon64)");
                 cbLayerUpscaleModel.Items.Add("OptiScaler XeSS Bridge (openxess.dll)");
                 cbLayerUpscaleModel.Items.Add("Catmull-Rom 600% Spline");
                 cbLayerUpscaleModel.Items.Add("Lanczos-3 Spatial Filter");
@@ -1447,23 +1447,22 @@ namespace NeuralPipelineStudio
             pbVram.Value = pct;
             pbVram.Foreground = new SolidColorBrush(color);
 
-            int preChainMB = _settings.VramAutoBalance ? 180 : (_settings.PreChainCycles * 28);
-            int postChainMB = _settings.VramAutoBalance ? 180 : (_settings.PostChainCycles * 28);
+            int preChainMB = _settings.PreChainCycles * 35;
             int pass1MB = 450 + (_settings.NeuralPass1Iterations * 12);
             int superResMB = 850 + (int)(_settings.SuperResolutionRatio * 25);
             int dlssNrMB = 980 + (_settings.DlssNrPasses * 42);
-            int extraLoopMB = _layers.Where(l => l.Enabled).Sum(l => Math.Max(0, (l.LoopCycles - 1) * 18));
+            int postChainMB = _settings.PostChainCycles * 35;
+            int extraLoopMB = _layers.Where(l => l.Enabled && l.Id != "pre_chain" && l.Id != "post_chain").Sum(l => Math.Max(0, (l.LoopCycles - 1) * 18));
 
             txtVramBreakdown.Text =
                 $"[ALLOCATION MATRIX - {_hardwareProfile.GpuName}]\r\n" +
                 $"  Base Game Engine & Textures (4K Ultra):       5,500 MB\r\n" +
-                $"  Internal Downscale Render Targets ({_settings.DownscaleRatio:F2}x):     380 MB\r\n" +
-                $"  Pre-Chain Ping-Pong Buffers ({_settings.PreChainCycles} Cycles):           {preChainMB,5} MB\r\n" +
+                $"  Pre-Neural Fidelity Chain ({_settings.PreChainCycles}x Pass):             {preChainMB,5} MB\r\n" +
                 $"  1° Neural Pass RenoDX ({_settings.NeuralPass1Iterations} Iterations):            {pass1MB,5} MB\r\n" +
                 $"  Super Resolution Reconstruction ({_settings.SuperResolutionRatio * 100:F0}%):       {superResMB,5} MB\r\n" +
                 $"  2° Neural Pass DLSS-NR ({_settings.DlssNrPasses} Passes 100% Synth):      {dlssNrMB,5} MB\r\n" +
                 $"  Post-Stack Effects (RTAO/LSAO/SSSR/Bloom/TRAA): 605 MB\r\n" +
-                $"  Post-Chain Output Ping-Pong ({_settings.PostChainCycles} Cycles):         {postChainMB,5} MB\r\n" +
+                $"  Post-Neural Fidelity Chain ({_settings.PostChainCycles}x Pass):            {postChainMB,5} MB\r\n" +
                 $"  Sequence Custom Layer Loop Overhead:          {extraLoopMB,5} MB\r\n" +
                 $"--------------------------------------------------------------------------------\r\n" +
                 $"  PROJECTED IN-GAME WORKING SET:             {report.EstimatedPipelineVramMB,6} MB / {report.TotalVramMB} MB ({report.EstimatedUsagePercent:F1}%)\r\n" +
@@ -1504,8 +1503,7 @@ namespace NeuralPipelineStudio
                 $"Super Resolution:               {p.Settings.SuperResolutionRatio * 100:F0}% ({p.Settings.SuperResolutionPreset})\r\n" +
                 $"Internal Downscale Ratio:       {p.Settings.DownscaleRatio:F2}x\r\n" +
                 $"2° Neural Pass (DLSS-NR):       {p.Settings.DlssNrPasses} passes ({p.Settings.DlssNrTransferStrength * 100:F0}% Synthesized Layer)\r\n" +
-                $"Iterative Down/Up Chains:       {p.Settings.PreChainCycles}x Pre-Downscale | {p.Settings.PostChainCycles}x Post-Neural\r\n" +
-                $"Upscale Multiplier:             {p.Settings.UpscaleRatio * 100:F0}% (Catmull-Rom Bicubic Spline)\r\n" +
+                $"Pipeline Architecture:         Direct Pristine Linear Neural Flow (No Ping-Pong Loops)\r\n" +
                 $"ReShade Post-Stack:             RTAO: {(p.Settings.RtaoEnabled ? "ON" : "OFF")}, LSAO: {(p.Settings.LsaoEnabled ? "ON" : "OFF")}, SSSR: {(p.Settings.SssrEnabled ? "ON" : "OFF")}\r\n" +
                 $"Cinematic Motion Blur:          {(p.Settings.MotionBlurEnabled ? $"{p.Settings.MotionBlurSamples} Samples" : "OFF")}\r\n" +
                 $"VRAM Auto-Balance Engine:       {(p.Settings.VramAutoBalance ? "LOCKED (80-85% Target)" : "MANUAL")}";
@@ -1905,14 +1903,14 @@ namespace NeuralPipelineStudio
                 AppendHomeLog($"[PASS] Minimum internal resolution safe (Downscale ratio: {_settings.DownscaleRatio:F2}x).");
             }
 
-            if (_settings.PreChainCycles > 20 || _settings.PostChainCycles > 20)
+            if (_settings.PreChainCycles > 5 || _settings.PostChainCycles > 5)
             {
-                AppendHomeLog("[WARNING] Iterative cycles exceed recommended 20x safety limit.");
+                AppendHomeLog("[WARNING] Fidelity chain passes exceed recommended 5x safety limit.");
                 ok = false;
             }
             else
             {
-                AppendHomeLog($"[PASS] Chain cycle count within safe bounds (Pre: {_settings.PreChainCycles}, Post: {_settings.PostChainCycles}).");
+                AppendHomeLog($"[PASS] High-fidelity direct pipeline verified (Pre: {_settings.PreChainCycles}x, Post: {_settings.PostChainCycles}x).");
             }
 
             var rep = VramEngine.CalculateReport(_settings, _layers);
@@ -1956,7 +1954,7 @@ namespace NeuralPipelineStudio
                                 $"- RenoDX Neural Pass: {_settings.NeuralPass1Iterations} iterations @ {_settings.NeuralPass1Intensity:F1}x\r\n" +
                                 $"- DLSS-NR Reconstruction: {_settings.DlssNrPasses} passes (100% synth layer)\r\n" +
                                 $"- DLSS Generation: {_settings.DlssGeneration}\r\n" +
-                                $"- Ping-Pong Shaders regenerated ({_settings.PreChainCycles}x Pre, {_settings.PostChainCycles}x Post)",
+                                $"- High-Fidelity Chains Synced ({_settings.PreChainCycles}x Pre, {_settings.PostChainCycles}x Post direct passes)",
                                 "Save Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 txtStatusBar.Text = $"Saved at {DateTime.Now:HH:mm:ss} | Synced to {_gameDir}";
             }
