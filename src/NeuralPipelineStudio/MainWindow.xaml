@@ -1,0 +1,969 @@
+﻿<Window x:Class="NeuralPipelineStudio.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite"
+        Width="1180" Height="700" MinWidth="920" MinHeight="580"
+        WindowStartupLocation="Manual"
+        Background="{StaticResource BrushBgDark}"
+        Foreground="{StaticResource BrushTextPrimary}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- 1. Left Sidebar -->
+            <ColumnDefinition Width="225"/>
+            <!-- 2. Main Content Area -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 1. LEFT SIDEBAR -->
+        <Border Grid.Column="0" Background="{StaticResource BrushBgSidebar}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,1,0" Padding="12,10">
+            <DockPanel LastChildFill="True">
+                <!-- Branding -->
+                <StackPanel DockPanel.Dock="Top" Margin="4,6,4,12">
+                    <TextBlock Text="⚡ NEURAL STUDIO" FontSize="17" FontWeight="Bold" Foreground="{StaticResource BrushAccentCyan}"/>
+                    <TextBlock Text="Universal Fleet Edition v2.0" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" Margin="2,2,0,0"/>
+                </StackPanel>
+
+                <!-- System Hardware Profile Card at Bottom -->
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource ModernCard}" Margin="0,10,0,0" Padding="8">
+                    <StackPanel>
+                        <TextBlock x:Name="txtProfileGame" Text="Nessun gioco selezionato" FontWeight="Bold" Foreground="#FFFFFF" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="txtProfileGpu" Text="RTX 4070 (12,282 MB)" FontWeight="SemiBold" Foreground="#34D399" FontSize="11" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="txtProfileDriver" Text="Driver: 616.56 | Win 11" Foreground="#E2E8F0" FontSize="10.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Navigation List -->
+                <StackPanel>
+                    <!-- HOME BUTTON -->
+                    <Button x:Name="btnNavHome" Content="🏠   Home &amp; Giochi PC" Style="{StaticResource NavButton}" Padding="10,8" FontSize="12" FontWeight="SemiBold" Click="NavHome_Click" ToolTip="Visualizza la libreria giochi rilevati nel PC e avvia la scansione automatica"/>
+                    
+                    <Border Background="{StaticResource BrushBorder}" Height="1" Margin="4,8,4,8"/>
+                    
+                    <!-- Contextual Game Studio Section Header -->
+                    <TextBlock x:Name="txtNavStudioLabel" Text="STUDIO GIOCO ATTIVO:" FontSize="10" FontWeight="Bold" Foreground="#CBD5E1" Margin="8,0,0,2"/>
+                    <TextBlock x:Name="txtNavActiveGame" Text="(Seleziona un gioco)" FontSize="12" FontWeight="Bold" Foreground="#00F0FF" Margin="8,0,0,6" TextTrimming="CharacterEllipsis"/>
+
+                    <Button x:Name="btnNavPipeline" Content="🎛   Pipeline Matrix" Style="{StaticResource NavButton}" Padding="10,6" FontSize="11.5" Click="NavPipeline_Click" ToolTip="Visualizza e riordina i layer di rendering GPU con moltiplicatori di loop e scaling"/>
+                    <Button x:Name="btnNavNeural" Content="⚡   Neural &amp; DLSS" Style="{StaticResource NavButton}" Padding="10,6" FontSize="11.5" Click="NavNeural_Click" ToolTip="Configura DLSS 2/3/3.5/4/5, RenoDX HDR, e i controlli avanzati del denoiser DLSS-NR"/>
+                    <Button x:Name="btnNavVram" Content="📊   VRAM &amp; Telemetria" Style="{StaticResource NavButton}" Padding="10,6" FontSize="11.5" Click="NavVram_Click" ToolTip="Telemetria memoria GPU in tempo reale con calibrazione automatica al target 80-85%"/>
+                    <Button x:Name="btnNavPresets" Content="💾   Preset &amp; Profili" Style="{StaticResource NavButton}" Padding="10,6" FontSize="11.5" Click="NavPresets_Click" ToolTip="Profili di calibrazione certificati per hardware Enthusiast, High-End, Mainstream ed Entry"/>
+                    <Button x:Name="btnNavDlss5" Content="📦   Modelli DLSS 4/5" Style="{StaticResource NavButton}" Padding="10,6" FontSize="11.5" Click="NavDlss5_Click" ToolTip="Libreria modelli DLL e runtime Streamline, Frame Gen, Ray Reconstruction e DLSS-NR"/>
+                    
+                    <Border Background="{StaticResource BrushBorder}" Height="1" Margin="4,8,4,8"/>
+
+                    <Button x:Name="btnNavWiki" Content="📚   Studio Wiki &amp; Guide" Style="{StaticResource NavButton}" Padding="10,6" FontSize="11.5" Click="NavWiki_Click" ToolTip="Manuale tecnico integrato, spiegazione matematica dei cicli e guida alla risoluzione problemi"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- 2. MAIN CONTENT AREA -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <!-- Top Header Bar -->
+                <RowDefinition Height="56"/>
+                <!-- Dynamic Views Area -->
+                <RowDefinition Height="*"/>
+                <!-- Bottom Status Bar -->
+                <RowDefinition Height="26"/>
+            </Grid.RowDefinitions>
+
+            <!-- Top Header Bar -->
+            <Border Grid.Row="0" Background="{StaticResource BrushBgCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1" Padding="14,6">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Title / Back to Home Button & Live Hardware Telemetry Banner -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="btnHeaderBackToHome" Content="⬅ Torna alla Home" Style="{StaticResource SecondaryButton}" Padding="8,3" FontSize="11" Margin="0,0,10,0" Visibility="Collapsed" Click="BackToHome_Click" ToolTip="Torna alla schermata iniziale per selezionare o scansionare altri giochi"/>
+                            <TextBlock x:Name="txtSectionTitle" Text="Libreria Giochi PC &amp; Flotta Neurale" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                        <TextBlock x:Name="txtHwBanner" Text="NVIDIA GeForce RTX 4070 | Driver: 616.56 | VRAM: 12,282 MB | Core i9-11900KF | 32 GB RAM" FontSize="11.5" FontWeight="SemiBold" Foreground="#67E8F9" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <!-- Header Badges & Actions -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Language Toggle Buttons (IT / EN) -->
+                        <Border Background="#1E2433" BorderBrush="#3E4866" BorderThickness="1" CornerRadius="4" Margin="0,0,8,0" Padding="2">
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="btnLangIt" Content="🇮🇹 IT" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentCyan}" Foreground="#000000" Padding="6,3" FontSize="10" FontWeight="Bold" Click="LangIt_Click" ToolTip="Imposta interfaccia in Italiano"/>
+                                <Button x:Name="btnLangEn" Content="🇬🇧 EN" Style="{StaticResource SecondaryButton}" Background="Transparent" Foreground="#CBD5E1" Padding="6,3" FontSize="10" FontWeight="Bold" BorderThickness="0" Click="LangEn_Click" ToolTip="Switch interface to English"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Auto-Calibrate for This PC Button -->
+                        <Button x:Name="btnHeaderAutoCalibrate" Content="⚡ Auto-Calibrate PC" Style="{StaticResource ModernButton}" Background="#1565C0" Foreground="#FFFFFF" Padding="8,5" FontSize="11" Margin="0,0,8,0" Click="AutoCalibrateHardware_Click" ToolTip="Adatta automaticamente tutti i parametri della pipeline alle specifiche esatte di questo PC, bloccando il carico all'82.5% VRAM"/>
+
+                        <!-- Guardrail Badge -->
+                        <Border Background="#004D40" BorderBrush="#00897B" BorderThickness="1" CornerRadius="4" Padding="6,3" Margin="0,0,8,0" ToolTip="Tutti i vincoli di sicurezza hardware (risoluzione minima e cicli) sono rispettati">
+                            <TextBlock x:Name="txtGuardrailBadge" Text="🛡 ZERO-CRASH: OK" FontWeight="Bold" Foreground="#4DB6AC" FontSize="10.5"/>
+                        </Border>
+
+                        <!-- VRAM Badge -->
+                        <Border x:Name="badgeVram" Background="{StaticResource BrushAccentGreen}" CornerRadius="4" Padding="6,3" Margin="0,0,8,0" ToolTip="Carico stimato in memoria video sul target ideale 80-85%">
+                            <TextBlock x:Name="txtVramBadge" Text="VRAM: 82.5% SWEET SPOT" FontWeight="Bold" Foreground="#000000" FontSize="10.5"/>
+                        </Border>
+
+                        <!-- Contextual Actions for Selected Game -->
+                        <StackPanel x:Name="pnlHeaderGameActions" Orientation="Horizontal" Visibility="Collapsed">
+                            <Button x:Name="btnHeaderInject" Content="🚀 Inietta" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="8,5" FontSize="11" Margin="0,0,6,0" Click="HeaderInject_Click" ToolTip="Installa la suite completa nel gioco attualmente attivo"/>
+                            <Button x:Name="btnHeaderVanilla" Content="🧹 Vanilla" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Padding="8,5" FontSize="11" Margin="0,0,6,0" Click="HeaderVanilla_Click" ToolTip="Ripristina il gioco attualmente attivo allo stato 100% vanilla"/>
+                            <Button x:Name="btnHeaderLaunch" Content="▶ Launch" Style="{StaticResource ModernButton}" Background="#2E7D32" Foreground="#FFFFFF" Padding="9,5" FontSize="11" Margin="0,0,6,0" Click="LaunchGame_Click" ToolTip="Avvia l'eseguibile del gioco attualmente attivo"/>
+                            <Button x:Name="btnHeaderSave" Content="💾 Save" Style="{StaticResource ModernButton}" Padding="9,5" FontSize="11" Click="SavePipeline_Click" ToolTip="Salva e sincronizza la configurazione nei file del gioco"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Dynamic Views Container -->
+            <Grid Grid.Row="1" Background="{StaticResource BrushBgDark}" Margin="12,8">
+                <!-- VIEW 0: HOME / GAMING FLEET HUB (DEFAULT LANDING VIEW) -->
+                <Grid x:Name="ViewHome" Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <!-- Hero Header & Controls -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- Game Cards Grid -->
+                        <RowDefinition Height="*"/>
+                        <!-- Diagnostic Terminal Expander -->
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 1. Hero Controls & Scanner Banner -->
+                    <Border Grid.Row="0" Style="{StaticResource ModernCard}" Margin="0,0,0,10" Padding="14,12">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Title & Subtitle -->
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                <StackPanel>
+                                    <TextBlock x:Name="txtHomeHeroTitle" Text="🎮 Libreria Giochi &amp; Suite Neurale PC" FontWeight="Bold" FontSize="15" Foreground="{StaticResource BrushAccentCyan}"/>
+                                    <TextBlock x:Name="txtHomeHeroSub" Text="Scansiona tutti i dischi del PC per rilevare i giochi compatibili (Steam, Xbox Game Pass, Epic Games, GOG). Clicca su un gioco per accedere allo studio dedicato e configurare la sequenza di rendering, il DLSS e i preset." FontSize="11" Foreground="{StaticResource BrushTextSecondary}" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="txtHomeFleetStatus" Text="0 Giochi Rilevati nel PC" HorizontalAlignment="Right" VerticalAlignment="Top" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="12"/>
+                            </Grid>
+
+                            <!-- Primary Actions Row -->
+                            <Grid Grid.Row="1" Margin="0,2,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Scan Whole PC Button -->
+                                <Button x:Name="btnHomeScan" Grid.Column="0" Content="🔍 Scansiona Giochi nel Tuo PC" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="15,7" FontSize="12" FontWeight="Bold" Margin="0,0,8,0" Click="ScanAllGames_Click" ToolTip="Scansiona tutti i dischi fissi (C:, E:, ecc.) e le librerie Steam, Xbox Game Pass, Epic e GOG"/>
+
+                                <!-- Add Custom Folder Button -->
+                                <Button x:Name="btnHomeFolder" Grid.Column="1" Content="📁 Cartella Manuale..." Style="{StaticResource SecondaryButton}" Padding="12,7" FontSize="11" Margin="0,0,8,0" Click="BrowseGame_Click" ToolTip="Seleziona manualmente la cartella di qualsiasi gioco installato"/>
+
+                                <!-- Search Input -->
+                                <TextBox x:Name="txtHomeSearch" Grid.Column="2" TextChanged="HomeSearch_TextChanged" Margin="0,0,8,0" FontSize="11.5" VerticalContentAlignment="Center" Padding="8,4" ToolTip="Cerca per titolo di gioco, motore grafico (RAGE, Unreal, REDengine, Creation) o API"/>
+
+                                <!-- Filter Mode Combobox -->
+                                <ComboBox x:Name="cbHomeFilter" Grid.Column="3" Width="145" SelectedIndex="0" SelectionChanged="CbHomeFilter_SelectionChanged" VerticalContentAlignment="Center" FontSize="11">
+                                    <ComboBoxItem x:Name="cbiHomeFilterAll" Content="Tutti i Giochi"/>
+                                    <ComboBoxItem x:Name="cbiHomeFilterInjected" Content="Solo Upgrade Attivo"/>
+                                    <ComboBoxItem x:Name="cbiHomeFilterVanilla" Content="Solo Vanilla"/>
+                                </ComboBox>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- 2. Games Cards List -->
+                    <Border Grid.Row="1" Style="{StaticResource ModernCard}" Margin="0,0,0,6" Padding="8">
+                        <Grid>
+                            <!-- Empty State Message -->
+                            <StackPanel x:Name="pnlHomeEmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" Margin="20">
+                                <TextBlock x:Name="txtHomeEmptyTitle" Text="🔍 Nessun gioco rilevato al momento" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="txtHomeEmptySub" Text="Clicca sul pulsante '🔍 Scansiona Giochi nel Tuo PC' in alto per cercare tutti i titoli compatibili installati sul computer." FontSize="11.5" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                                <Button x:Name="btnHomeEmptyScan" Content="🔍 Avvia Scansione PC Ora" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="14,7" FontSize="11.5" HorizontalAlignment="Center" Click="ScanAllGames_Click"/>
+                            </StackPanel>
+
+                            <!-- Cards ListBox with custom Card Template -->
+                            <ListBox x:Name="lstHomeGames" Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource BrushBgCard}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Left Details -->
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,4">
+                                                        <TextBlock Text="{Binding GameName}" FontWeight="Bold" FontSize="14.5" Foreground="#FFFFFF" Margin="0,0,12,0"/>
+                                                        
+                                                        <!-- Engine Badge -->
+                                                        <Border Background="#1B3854" CornerRadius="4" Padding="6,2.5" Margin="0,0,6,0">
+                                                            <TextBlock Text="{Binding EngineDisplay}" FontSize="10.5" FontWeight="SemiBold" Foreground="#38BDF8"/>
+                                                        </Border>
+
+                                                        <!-- API Badge -->
+                                                        <Border Background="#3C1A5B" CornerRadius="4" Padding="6,2.5" Margin="0,0,6,0">
+                                                            <TextBlock Text="{Binding ApiDisplay}" FontSize="10.5" FontWeight="SemiBold" Foreground="#E9D5FF"/>
+                                                        </Border>
+
+                                                        <!-- AntiCheat Badge -->
+                                                        <Border Background="#143D36" CornerRadius="4" Padding="6,2.5" Margin="0,0,6,0">
+                                                            <TextBlock Text="{Binding AntiCheatDisplay}" FontSize="10.5" FontWeight="SemiBold" Foreground="{Binding AntiCheatColorHex}"/>
+                                                        </Border>
+
+                                                        <!-- Status Badge -->
+                                                        <Border Background="#153620" CornerRadius="4" Padding="6,2.5">
+                                                            <TextBlock Text="{Binding StatusDisplay}" FontSize="10.5" FontWeight="Bold" Foreground="{Binding StatusColorHex}"/>
+                                                        </Border>
+                                                    </StackPanel>
+
+                                                    <!-- Directory text -->
+                                                    <TextBlock Text="{Binding GameDirectory}" FontSize="11" Foreground="#CBD5E1" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+
+                                                <!-- Right Actions -->
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <!-- Primary: Configure Game Studio -->
+                                                    <Button Content="🎛 Configura Gioco &amp; Pipeline" Style="{StaticResource ModernButton}" Background="#1565C0" Foreground="#FFFFFF" Padding="11,5" FontSize="11" FontWeight="SemiBold" Margin="0,0,6,0" Tag="{Binding}" Click="ConfigureGame_Click" ToolTip="Entra nello studio dedicato a questo gioco per configurare la sequenza di rendering, il DLSS e i preset"/>
+                                                    
+                                                    <!-- Inietta -->
+                                                    <Button Content="🚀 Inietta" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="9,5" FontSize="10.5" Margin="0,0,4,0" Tag="{Binding}" Click="InjectGame_Click" ToolTip="Installa proxy, shader e modelli neurali in questo gioco"/>
+
+                                                    <!-- Rimuovi -->
+                                                    <Button Content="🧹 Vanilla" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Padding="8,5" FontSize="10.5" Margin="0,0,4,0" Tag="{Binding}" Click="UninstallGame_Click" ToolTip="Ripristina il gioco al 100% allo stato vanilla"/>
+
+                                                    <!-- Launch -->
+                                                    <Button Content="▶ Avvia" Style="{StaticResource SecondaryButton}" Padding="8,5" FontSize="10.5" Tag="{Binding}" Click="LaunchFromCard_Click" ToolTip="Avvia l'eseguibile di questo gioco"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+
+                    <!-- 3. Terminal Log Card -->
+                    <Expander x:Name="expHomeTerminal" Grid.Row="2" Header="Terminal Log &amp; Diagnostica Iniezione Flotta" Foreground="{StaticResource BrushTextSecondary}" FontSize="10.5">
+                        <Border Style="{StaticResource ModernCard}" Margin="0,3,0,0">
+                            <TextBox x:Name="txtHomeInstallLog" Height="90" FontFamily="Consolas" FontSize="10" Background="#0A0D14" Foreground="#00FF80" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+                        </Border>
+                    </Expander>
+                </Grid>
+<Grid x:Name="ViewPipeline" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" MinWidth="340" MaxWidth="460"/>
+                        <ColumnDefinition Width="1.2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Sequence List & Toolbars -->
+                    <Border Grid.Column="0" Style="{StaticResource ModernCard}" Margin="0,0,10,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock x:Name="txtSequenceTitle" Grid.Row="0" Text="Rendering Execution Sequence:" FontWeight="Bold" FontSize="12" Margin="0,0,0,6"/>
+                            
+                            <!-- Top Mini-Toolbar: Add (+), Remove (-), Copy, Paste -->
+                            <Grid Grid.Row="1" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="btnAddLayer" Grid.Column="0" Content="➕ Add (+)" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Margin="0,0,2,0" Padding="0,5" FontSize="11" Click="AddLayer_Click" ToolTip="Aggiunge un nuovo layer neurale, catena ping-pong o effetto alla sequenza"/>
+                                <Button x:Name="btnRemoveLayer" Grid.Column="1" Content="➖ Remove (-)" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Margin="2,0,2,0" Padding="0,5" FontSize="11" Click="RemoveLayer_Click" ToolTip="Rimuove il passaggio attualmente selezionato dalla sequenza"/>
+                                <Button x:Name="btnCopyLayer" Grid.Column="2" Content="📋 Copy" Style="{StaticResource SecondaryButton}" Margin="2,0,2,0" Padding="0,5" FontSize="11" Click="CopyLayer_Click" ToolTip="Copia il layer selezionato con tutti i suoi parametri dedicati negli appunti"/>
+                                <Button x:Name="btnPasteLayer" Grid.Column="3" Content="📥 Paste" Style="{StaticResource SecondaryButton}" Margin="2,0,0,0" Padding="0,5" FontSize="11" Click="PasteLayer_Click" ToolTip="Incolla il layer duplicato subito sotto la voce selezionata"/>
+                            </Grid>
+
+                            <!-- Sequence List with Badges & Right-Click Context Menu -->
+                            <ListBox Grid.Row="2" x:Name="lstLayers" Background="{StaticResource BrushBgInput}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" SelectionChanged="LstLayers_SelectionChanged">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu Background="{StaticResource BrushBgCard}" Foreground="{StaticResource BrushTextPrimary}">
+                                        <MenuItem Header="📋 Copy Layer" Click="CopyLayer_Click"/>
+                                        <MenuItem Header="📥 Paste Layer Below" Click="PasteLayer_Click"/>
+                                        <MenuItem Header="📑 Duplicate / Clone (Copia e Incolla)" Click="DuplicateLayer_Click"/>
+                                        <Separator Background="{StaticResource BrushBorder}"/>
+                                        <MenuItem Header="➕ Add New Layer... (+)" Click="AddLayer_Click"/>
+                                        <MenuItem Header="➖ Remove Selected Layer (-)" Click="RemoveLayer_Click"/>
+                                        <Separator Background="{StaticResource BrushBorder}"/>
+                                        <MenuItem Header="🔄 Set Loop Cycles">
+                                            <MenuItem Header="1x (Single Pass)" Tag="1" Click="SetLoop_Click"/>
+                                            <MenuItem Header="2x Loop" Tag="2" Click="SetLoop_Click"/>
+                                            <MenuItem Header="5x Loop" Tag="5" Click="SetLoop_Click"/>
+                                            <MenuItem Header="10x Loop (Recommended)" Tag="10" Click="SetLoop_Click"/>
+                                            <MenuItem Header="15x Loop" Tag="15" Click="SetLoop_Click"/>
+                                            <MenuItem Header="20x Loop (Max)" Tag="20" Click="SetLoop_Click"/>
+                                        </MenuItem>
+                                        <MenuItem Header="📐 Scaling &amp; Ping-Pong Rescale">
+                                            <MenuItem Header="🔄 Ping-Pong Rescale (0.70x Down ⇄ 1.42x Up - 10x Loop)" Tag="pingpong_70_142" Click="SetScale_Click"/>
+                                            <MenuItem Header="🔄 Ping-Pong Rescale (0.50x Down ⇄ 2.00x Up - Performance)" Tag="pingpong_50_200" Click="SetScale_Click"/>
+                                            <MenuItem Header="🔄 Ping-Pong Rescale (0.70x Down ⇄ 900% DLSS Super Resolution)" Tag="pingpong_70_900" Click="SetScale_Click"/>
+                                            <Separator Background="{StaticResource BrushBorder}"/>
+                                            <MenuItem Header="Downscale 0.70x (Internal Render Target)" Tag="down_70" Click="SetScale_Click"/>
+                                            <MenuItem Header="Downscale 0.50x (Performance)" Tag="down_50" Click="SetScale_Click"/>
+                                            <MenuItem Header="Native 1.0x (DLAA)" Tag="native_100" Click="SetScale_Click"/>
+                                            <MenuItem Header="Upscale 600% (Catmull-Rom)" Tag="up_600" Click="SetScale_Click"/>
+                                            <MenuItem Header="Upscale 900% (DLSS Ultra Quality)" Tag="up_900" Click="SetScale_Click"/>
+                                        </MenuItem>
+                                        <Separator Background="{StaticResource BrushBorder}"/>
+                                        <MenuItem Header="▲ Move Up" Click="MoveUp_Click"/>
+                                        <MenuItem Header="▼ Move Down" Click="MoveDown_Click"/>
+                                        <MenuItem Header="🔘 Toggle Active / Bypass" Click="ToggleLayer_Click"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox Grid.Column="0" IsChecked="{Binding Enabled}" VerticalAlignment="Center" Margin="0,0,6,0" Click="LayerCheck_Click" ToolTip="Abilita o disabilita questo passaggio nella pipeline"/>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12.5" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
+                                                <WrapPanel Margin="0,3,0,0">
+                                                    <Border Background="#13361E" CornerRadius="3" Padding="5,1.5" Margin="0,0,5,0">
+                                                        <TextBlock Text="{Binding LoopDisplay}" FontSize="10" FontWeight="SemiBold" Foreground="#34D399"/>
+                                                    </Border>
+                                                    <Border Background="#1E1B4B" CornerRadius="3" Padding="5,1.5" Margin="0,0,5,0" ToolTip="Shader ReShade Dedicato (.fx)">
+                                                        <TextBlock Text="{Binding ShaderDisplay, StringFormat='🎨 {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="#38BDF8"/>
+                                                    </Border>
+                                                    <Border Background="#3C1A5B" CornerRadius="3" Padding="5,1.5" Margin="0,0,5,0" ToolTip="Modello Neurale DLL (da dlss5extracted)">
+                                                        <TextBlock Text="{Binding DllDisplay, StringFormat='🧠 {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="#E9D5FF"/>
+                                                    </Border>
+                                                    <Border Background="#451A03" CornerRadius="3" Padding="5,1.5" Margin="0,0,5,0" ToolTip="Addon Runtime Dedicato">
+                                                        <TextBlock Text="{Binding AddonDisplay, StringFormat='🔌 {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="#F59E0B"/>
+                                                    </Border>
+                                                    <Border Background="#45260A" CornerRadius="3" Padding="5,1.5" Margin="0,0,5,0">
+                                                        <TextBlock Text="{Binding ScaleDisplay}" FontSize="10" FontWeight="SemiBold" Foreground="#FDE047"/>
+                                                    </Border>
+                                                </WrapPanel>
+                                            </StackPanel>
+                                            <Border Grid.Column="2" Background="#163A4A" CornerRadius="4" Padding="5,2" Margin="4,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Category}" FontSize="10" FontWeight="SemiBold" Foreground="#67E8F9"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <!-- Bottom Toolbar: Up, Down, Toggle, Reset -->
+                            <Grid Grid.Row="3" Margin="0,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="btnMoveUp" Grid.Column="0" Content="▲ Up" Style="{StaticResource ModernButton}" Margin="0,0,2,0" Padding="0,5" FontSize="11" Click="MoveUp_Click" ToolTip="Sposta il passaggio prima nella sequenza di esecuzione GPU"/>
+                                <Button x:Name="btnMoveDown" Grid.Column="1" Content="▼ Down" Style="{StaticResource ModernButton}" Margin="2,0,2,0" Padding="0,5" FontSize="11" Click="MoveDown_Click" ToolTip="Sposta il passaggio dopo nella sequenza di esecuzione GPU"/>
+                                <Button x:Name="btnToggleLayer" Grid.Column="2" Content="Toggle" Style="{StaticResource SecondaryButton}" Margin="2,0,2,0" Padding="0,5" FontSize="11" Click="ToggleLayer_Click" ToolTip="Attiva o disattiva il passaggio selezionato"/>
+                                <Button x:Name="btnResetPipeline" Grid.Column="3" Content="↺ Reset" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentOrange}" Margin="2,0,0,0" Padding="0,5" FontSize="11" Click="ResetPipeline_Click" ToolTip="Ripristina l'ordine ottimale certificato dei passaggi"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Right: Inspector (Dedicated Layer Property Editor) -->
+                    <Border Grid.Column="1" Style="{StaticResource ModernCard}" Background="#151A26" BorderBrush="#3B82F6" BorderThickness="1.5">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="4">
+                                <!-- Header with editable name & active toggle -->
+                                <Border Background="#0F172A" BorderBrush="#00F0FF" BorderThickness="1" CornerRadius="6" Padding="8,6" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="txtSelectedLayerName" Text="Select a layer to inspect" FontSize="14.5" FontWeight="Bold" Foreground="#00F0FF" Background="Transparent" BorderThickness="0" TextChanged="SelectedLayerName_TextChanged" ToolTip="Rinomina liberamente questo passaggio"/>
+                                        <CheckBox x:Name="chkSelectedLayerEnabled" Grid.Column="1" Content="ACTIVE PASS" FontWeight="Bold" FontSize="11.5" Foreground="#34D399" VerticalAlignment="Center" Margin="8,0,0,0" Click="SelectedLayerEnabled_Click" ToolTip="Stato di esecuzione nel render loop della GPU"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Technique & Shader banner -->
+                                <Border Background="#1E293B" CornerRadius="5" Padding="8,5" Margin="0,0,0,8">
+                                    <StackPanel>
+                                        <TextBlock x:Name="txtInspectorTech" Text="Technique: -" FontSize="12.5" FontWeight="Bold" FontFamily="Consolas" Foreground="#34D399" Margin="0,0,0,2"/>
+                                        <TextBlock x:Name="txtInspectorShader" Text="Shader: - | Category: -" FontSize="11.5" FontWeight="SemiBold" FontFamily="Consolas" Foreground="#FFFFFF"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Dedicated Per-Item Parameter Controls -->
+                                <Border Background="#1A2234" BorderBrush="#334155" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <StackPanel>
+                                        <!-- Section 1: Ping-Pong & Rescaling Engine -->
+                                        <Border Background="#0C1B2E" BorderBrush="#38BDF8" BorderThickness="1" CornerRadius="5" Padding="8,4" Margin="0,0,0,8">
+                                            <TextBlock x:Name="txtInspectorSec1" Text="⚙ RIDIMENSIONAMENTO &amp; PING-PONG RESCALE (DOWN ⇄ UP):" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8"/>
+                                        </Border>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Scaling Mode -->
+                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                <TextBlock x:Name="txtInspectorScaleMode" Text="Modalità Rescaling / Ping-Pong:" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,3"/>
+                                                <ComboBox x:Name="cbLayerScaleMode" SelectionChanged="LayerScaleMode_SelectionChanged" ToolTip="Seleziona la modalità di rescaling (es. Ping-Pong alternato tra Down e Up, DLSS Super Resolution o Pass Diretto)">
+                                                    <ComboBoxItem Content="Ping-Pong (Downscale ⇄ Upscale Loop)"/>
+                                                    <ComboBoxItem Content="DLSS Super Resolution (Neural Upscale)"/>
+                                                    <ComboBoxItem Content="Downscale Only (Internal Buffer)"/>
+                                                    <ComboBoxItem Content="Upscale Only (Spatial Catmull-Rom)"/>
+                                                    <ComboBoxItem Content="DLAA (Native 1.0x Anti-Aliasing)"/>
+                                                    <ComboBoxItem Content="None (Direct Pass)"/>
+                                                </ComboBox>
+                                            </StackPanel>
+
+                                            <!-- Upscaling Model in Use -->
+                                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                                <TextBlock x:Name="txtInspectorUpscaleModel" Text="Modello / Algoritmo Upscaling in Uso:" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,3"/>
+                                                <ComboBox x:Name="cbLayerUpscaleModel" SelectionChanged="LayerUpscaleModel_SelectionChanged" ToolTip="Modello o algoritmo neurale selezionato per la fase di upscaling (DLSS 4/4.5, RenoDX, Catmull-Rom, ecc.)"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Downscale Target Ratio / % -->
+                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock x:Name="txtInspectorDownscale" Text="Downscale (Compressione):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                                    <TextBox x:Name="txtLayerDownscale" Text="70%" Width="52" FontSize="12" FontWeight="Bold" Foreground="#00F0FF" Background="#0A0E1A" BorderBrush="#00F0FF" Padding="4,2" TextAlignment="Right" HorizontalAlignment="Right" LostFocus="TxtLayerDownscale_LostFocus" KeyDown="TxtLayerDownscale_KeyDown" ToolTip="Valore percentuale esatto editabile (es. 70%, 50%, 80%)"/>
+                                                </Grid>
+                                                <Slider x:Name="slLayerDownscale" Minimum="20" Maximum="100" Value="70" ValueChanged="LayerDownscale_ValueChanged" ToolTip="Fattore di compressione buffer dal 20% al 100%"/>
+                                            </StackPanel>
+
+                                            <!-- Upscale Target Ratio / % -->
+                                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock x:Name="txtInspectorUpscale" Text="Upscale (Espansione):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                                    <TextBox x:Name="txtLayerUpscale" Text="142%" Width="56" FontSize="12" FontWeight="Bold" Foreground="#00F0FF" Background="#0A0E1A" BorderBrush="#00F0FF" Padding="4,2" TextAlignment="Right" HorizontalAlignment="Right" LostFocus="TxtLayerUpscale_LostFocus" KeyDown="TxtLayerUpscale_KeyDown" ToolTip="Valore percentuale esatto editabile (es. 142%, 200%, 600%, 900%)"/>
+                                                </Grid>
+                                                <Slider x:Name="slLayerUpscale" Minimum="100" Maximum="1500" Value="142" ValueChanged="LayerUpscale_ValueChanged" ToolTip="Fattore di espansione dal 100% al 1500% (DLSS Ultra Quality)"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Separator Background="#334155" Margin="0,0,0,8"/>
+
+                                        <!-- Section 2: Iterations, Loops & Intensities -->
+                                        <Border Background="#0D241C" BorderBrush="#34D399" BorderThickness="1" CornerRadius="5" Padding="8,4" Margin="0,0,0,8">
+                                            <TextBlock x:Name="txtInspectorSec2" Text="🔄 ITERAZIONI, PASSI NEURALI &amp; INTENSITÀ (TOTALMENTE EDITABILI):" FontSize="11.5" FontWeight="Bold" Foreground="#34D399"/>
+                                        </Border>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Loop Cycles Multiplier -->
+                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock x:Name="txtInspectorLoop" Text="Cicli Iterazione (Loop):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                                    <TextBox x:Name="txtLayerLoop" Text="10x" Width="48" FontSize="12" FontWeight="Bold" Foreground="#34D399" Background="#0A0E1A" BorderBrush="#34D399" Padding="4,2" TextAlignment="Right" HorizontalAlignment="Right" LostFocus="TxtLayerLoop_LostFocus" KeyDown="TxtLayerLoop_KeyDown" ToolTip="Numero esatto di iterazioni (es. 10, 15, 30)"/>
+                                                </Grid>
+                                                <Slider x:Name="slLayerLoop" Minimum="1" Maximum="50" Value="10" ValueChanged="LayerLoop_ValueChanged" ToolTip="Moltiplica le iterazioni di questo passaggio (1x-50x)"/>
+                                            </StackPanel>
+
+                                            <!-- Neural Pass Iterations -->
+                                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock x:Name="txtInspectorNeuralPass" Text="Iterazioni Neurali (Tensor):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                                    <TextBox x:Name="txtLayerNeuralPass" Text="30" Width="48" FontSize="12" FontWeight="Bold" Foreground="#34D399" Background="#0A0E1A" BorderBrush="#34D399" Padding="4,2" TextAlignment="Right" HorizontalAlignment="Right" LostFocus="TxtLayerNeuralPass_LostFocus" KeyDown="TxtLayerNeuralPass_KeyDown" ToolTip="Passate tensor per RenoDX o passaggi di denoise DLSS-NR"/>
+                                                </Grid>
+                                                <Slider x:Name="slLayerNeuralPass" Minimum="1" Maximum="60" Value="30" ValueChanged="LayerNeuralPass_ValueChanged" ToolTip="Iterazioni neurali RenoDX o passi denoiser DLSS-NR"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Intensity / Synthetic Blend -->
+                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock x:Name="txtInspectorIntensity" Text="Intensità / Synthetic Blend:" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                                    <TextBox x:Name="txtLayerIntensity" Text="100%" Width="52" FontSize="12" FontWeight="Bold" Foreground="#FBBF24" Background="#0A0E1A" BorderBrush="#FBBF24" Padding="4,2" TextAlignment="Right" HorizontalAlignment="Right" LostFocus="TxtLayerIntensity_LostFocus" KeyDown="TxtLayerIntensity_KeyDown" ToolTip="Percentuale di blending o intensità del filtro (es. 100%, 80%, 150%)"/>
+                                                </Grid>
+                                                <Slider x:Name="slLayerIntensity" Minimum="0" Maximum="500" Value="100" ValueChanged="LayerIntensity_ValueChanged" ToolTip="Intensità del filtro o percentuale del layer sintetico (0% - 500%)"/>
+                                            </StackPanel>
+
+                                            <!-- Quality Preset Profile -->
+                                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                                <TextBlock x:Name="txtInspectorQuality" Text="Quality Preset Profile:" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,3"/>
+                                                <ComboBox x:Name="cbLayerQuality" SelectionChanged="LayerQuality_SelectionChanged" ToolTip="Profilo di qualità del modello neurale">
+                                                    <ComboBoxItem Content="Preset F (Ultra Sharp / Stable - Raccomandato)"/>
+                                                    <ComboBoxItem Content="Preset E (Balanced Motion)"/>
+                                                    <ComboBoxItem Content="Preset C (Fast Motion Tracking)"/>
+                                                    <ComboBoxItem Content="Preset D (Performance Bias)"/>
+                                                    <ComboBoxItem Content="DLAA (Native AA 100%)"/>
+                                                    <ComboBoxItem Content="Ultra Performance (Max FPS)"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!-- Section 3: Modelli Shader, DLL ed Addon Dedicati -->
+                                        <Border Background="#16192E" BorderBrush="#818CF8" BorderThickness="1" CornerRadius="5" Padding="8,4" Margin="0,6,0,8">
+                                            <TextBlock x:Name="txtInspectorSec3" Text="🔗 MODELLI SHADER, DLL ED ADDON DEDICATI (DLSS 5 &amp; STREAMLINE):" FontSize="11.5" FontWeight="Bold" Foreground="#A5B4FC"/>
+                                        </Border>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Dedicated Shader (.fx) -->
+                                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                                <TextBlock x:Name="txtInspectorDedicatedShader" Text="🎨 Shader ReShade Dedicato (.fx):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,3"/>
+                                                <ComboBox x:Name="cbLayerShader" SelectionChanged="LayerShader_SelectionChanged" ToolTip="Seleziona o modifica lo shader ReShade (.fx) associato a questa funzione"/>
+                                            </StackPanel>
+
+                                            <!-- Dedicated Addon (.addon64) -->
+                                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                                <TextBlock x:Name="txtInspectorDedicatedAddon" Text="🔌 Addon Dedicato (.addon64 / .dll):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,3"/>
+                                                <ComboBox x:Name="cbLayerAddon" SelectionChanged="LayerAddon_SelectionChanged" ToolTip="Seleziona l'addon di runtime dedicato (RenoDX HDR, OptiScaler, ReShade)"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!-- Associated Repository DLL Model -->
+                                        <StackPanel Margin="0,0,0,4">
+                                            <TextBlock x:Name="txtInspectorDedicatedDll" Text="🧠 Modello Neurale / DLL Dedicata (da dlss5extracted):" FontSize="11.5" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,3"/>
+                                            <ComboBox x:Name="cbLayerDll" SelectionChanged="LayerDll_SelectionChanged" ToolTip="Collega questo passaggio al modello neurale o alla DLL specifica del repository DLSS 5"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Description -->
+                                <TextBlock x:Name="txtInspectorDescTitle" Text="Dettagli e Specifiche di Esecuzione GPU:" FontWeight="Bold" FontSize="12" Foreground="#38BDF8" Margin="0,0,0,3"/>
+                                <TextBox x:Name="txtInspectorDesc" Height="100" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Margin="0,0,0,8" FontSize="12" FontWeight="SemiBold" FontFamily="Segoe UI" Foreground="#FFFFFF" Background="#0A0E1A" BorderBrush="#38BDF8" BorderThickness="1" Padding="8"/>
+
+                                <!-- VRAM Impact & Guardrail -->
+                                <Border Background="#1E293B" BorderBrush="#34D399" BorderThickness="1" CornerRadius="6" Padding="8">
+                                    <TextBlock x:Name="txtLayerVramImpact" Text="• VRAM: Calibrato con buffer ping-pong duale&#x0a;• Interposer: Streamline / ReShade DX12/Vulkan compatibile" Foreground="#E2E8F0" FontSize="11.5" FontWeight="SemiBold"/>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+
+                <!-- VIEW 2: NEURAL ENGINES & DLSS -->
+                <ScrollViewer x:Name="ViewNeural" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Top Neural Generation Selector Card -->
+                        <Border Style="{StaticResource ModernCard}" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="280"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Neural Generation Target &amp; Pipeline Architecture" FontWeight="Bold" FontSize="13.5" Foreground="{StaticResource BrushAccentCyan}"/>
+                                    <TextBlock Text="Seleziona la generazione del modello neurale target (DLSS 2, 3, 3.5, 4.0, 4.5, 5.0) per adattare pesi e shader." FontSize="11" Foreground="{StaticResource BrushTextSecondary}" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <ComboBox x:Name="cbDlssGeneration" Grid.Column="1" VerticalAlignment="Center" FontSize="11.5" SelectionChanged="DlssGeneration_SelectionChanged" ToolTip="Seleziona la generazione target del modello neurale">
+                                    <ComboBoxItem Content="DLSS 5.0 (Synthetic Master &amp; RenoDX)" IsSelected="True"/>
+                                    <ComboBoxItem Content="DLSS 4.5 (Sub-Pixel Tensor &amp; DLSS-NR)"/>
+                                    <ComboBoxItem Content="DLSS 4.0 (Multi-Pass Transformer)"/>
+                                    <ComboBoxItem Content="DLSS 3.5 (Ray Reconstruction)"/>
+                                    <ComboBoxItem Content="DLSS 3.0 (Frame Generation)"/>
+                                    <ComboBoxItem Content="DLSS 2.x (Standard Super Resolution)"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Grid 2x2 for Main Cards -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Card 1: 1° Neural Pass (RenoDX) -->
+                            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCard}" Margin="0,0,8,10">
+                                <StackPanel>
+                                    <TextBlock Text="1° Neural Pass - RenoDX Tensor Engine" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,10"/>
+                                    
+                                    <Grid Margin="0,3">
+                                        <TextBlock Text="Pass Count (Iterations):" ToolTip="Numero di passate di sintesi volumetrica neurale (Consigliato: 30x)"/>
+                                        <TextBox x:Name="valPass1Iter" Text="30" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPass1Iter_LostFocus" KeyDown="ValPass1Iter_KeyDown" ToolTip="Valore esatto editabile passate RenoDX"/>
+                                    </Grid>
+                                    <Slider x:Name="slPass1Iter" Minimum="1" Maximum="50" Value="30" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Direct Neural Intensity:" ToolTip="Fattore di moltiplicazione della luminosità volumetrica"/>
+                                        <TextBox x:Name="valPass1Intensity" Text="2.0x" Width="48" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPass1Intensity_LostFocus" KeyDown="ValPass1Intensity_KeyDown" ToolTip="Valore esatto editabile intensità volumetrica"/>
+                                    </Grid>
+                                    <Slider x:Name="slPass1Intensity" Minimum="5" Maximum="50" Value="20" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Diffuse White (Nits):" ToolTip="Calibrazione del punto di bianco diffuso HDR (498 nits)"/>
+                                        <TextBox x:Name="valPass1Nits" Text="498 nits" Width="64" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPass1Nits_LostFocus" KeyDown="ValPass1Nits_KeyDown" ToolTip="Valore esatto editabile bianco diffuso nits"/>
+                                    </Grid>
+                                    <Slider x:Name="slPass1Nits" Minimum="100" Maximum="1000" Value="498" ValueChanged="NeuralSlider_Changed"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Card 2: Super Resolution & Downscale -->
+                            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCard}" Margin="8,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="Super Resolution &amp; Scaling Matrix" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,10"/>
+                                    
+                                    <Grid Margin="0,3">
+                                        <TextBlock Text="Super Resolution Ratio (%):" ToolTip="Moltiplicatore di ricostruzione temporale sub-pixel (Consigliato: 900%)"/>
+                                        <TextBox x:Name="valSuperRes" Text="900%" Width="52" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValSuperRes_LostFocus" KeyDown="ValSuperRes_KeyDown" ToolTip="Percentuale esatta editabile Super Resolution"/>
+                                    </Grid>
+                                    <Slider x:Name="slSuperRes" Minimum="100" Maximum="1500" Value="900" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Internal Downscale Buffer Ratio:" ToolTip="Risoluzione interna di rendering prima della ricostruzione (Consigliato: 0.70x)"/>
+                                        <TextBox x:Name="valDownscale" Text="0.70x" Width="50" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValDownscale_LostFocus" KeyDown="ValDownscale_KeyDown" ToolTip="Risoluzione interna downscale editabile (es. 0.70x o 70%)"/>
+                                    </Grid>
+                                    <Slider x:Name="slDownscale" Minimum="45" Maximum="100" Value="70" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Output Upscale Spline (Catmull-Rom):" ToolTip="Moltiplicatore spline bicubica di output"/>
+                                        <TextBox x:Name="valUpscaleRatio" Text="600%" Width="52" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValUpscaleRatio_LostFocus" KeyDown="ValUpscaleRatio_KeyDown" ToolTip="Percentuale esatta editabile upscale spline"/>
+                                    </Grid>
+                                    <Slider x:Name="slUpscaleRatio" Minimum="100" Maximum="1000" Value="600" ValueChanged="NeuralSlider_Changed"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Card 3: 2° Neural Pass (DLSS-NR) -->
+                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCard}" Margin="0,0,8,10">
+                                <StackPanel>
+                                    <TextBlock Text="2° Neural Pass - DLSS-NR Neural Denoising" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,10"/>
+                                    
+                                    <Grid Margin="0,3">
+                                        <TextBlock Text="Denoising Passes:" ToolTip="Numero di passate di denoising stocastico neurale (Consigliato: 15)"/>
+                                        <TextBox x:Name="valDlssNrPasses" Text="15" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValDlssNrPasses_LostFocus" KeyDown="ValDlssNrPasses_KeyDown" ToolTip="Passate denoiser DLSS-NR esatte editabili"/>
+                                    </Grid>
+                                    <Slider x:Name="slDlssNrPasses" Minimum="1" Maximum="30" Value="15" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Synthesized Layer Transfer Strength:" ToolTip="Percentuale di sintesi neurale rispetto all'immagine grezza (100% = zero rumore)"/>
+                                        <TextBox x:Name="valDlssNrTransfer" Text="100%" Width="50" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValDlssNrTransfer_LostFocus" KeyDown="ValDlssNrTransfer_KeyDown" ToolTip="Percentuale synth layer transfer editabile"/>
+                                    </Grid>
+                                    <Slider x:Name="slDlssNrTransfer" Minimum="0" Maximum="100" Value="100" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="White Point Trim:" ToolTip="Regolazione delle alte luci nel denoiser (Consigliato: 1.0)"/>
+                                        <TextBlock x:Name="valDlssNrTrim" Text="1.0" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
+                                    </Grid>
+                                    <Slider x:Name="slDlssNrTrim" Minimum="0" Maximum="50" Value="10" ValueChanged="NeuralSlider_Changed"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Card 4: Iterative Ping-Pong Chains -->
+                            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCard}" Margin="8,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="Iterative Down/Up Ping-Pong Chains" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,10"/>
+                                    
+                                    <Grid Margin="0,3">
+                                        <TextBlock Text="Pre-Downscale Iterative Cycles:" ToolTip="Cicli alternati di campionamento prima del passaggio neurale (Consigliato: 10x)"/>
+                                        <TextBox x:Name="valPreCycles" Text="10x" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPreCycles_LostFocus" KeyDown="ValPreCycles_KeyDown" ToolTip="Cicli ping-pong pre-chain editabili"/>
+                                    </Grid>
+                                    <Slider x:Name="slPreCycles" Minimum="1" Maximum="20" Value="10" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Post-Neural Output Iterative Cycles:" ToolTip="Cicli alternati di consolidamento prima dell'output a schermo (Consigliato: 10x)"/>
+                                        <TextBox x:Name="valPostCycles" Text="10x" Width="44" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" Background="#0F172A" BorderBrush="#334155" Padding="2,1" TextAlignment="Right" LostFocus="ValPostCycles_LostFocus" KeyDown="ValPostCycles_KeyDown" ToolTip="Cicli ping-pong post-chain editabili"/>
+                                    </Grid>
+                                    <Slider x:Name="slPostCycles" Minimum="1" Maximum="20" Value="10" ValueChanged="NeuralSlider_Changed"/>
+
+                                    <Grid Margin="0,8,0,3">
+                                        <TextBlock Text="Motion Blur Samples &amp; Strength:" ToolTip="Campioni e forza dello shutter cinematico guidato dal motion buffer"/>
+                                        <TextBlock x:Name="valBlurSamples" Text="14 Samples" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}"/>
+                                    </Grid>
+                                    <Slider x:Name="slBlurSamples" Minimum="4" Maximum="32" Value="14" ValueChanged="NeuralSlider_Changed"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Card 5: Advanced Granular Controls (DLSS-NR & Ping-Pong Tuning) -->
+                        <Border Style="{StaticResource ModernCard}" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Advanced Granular Parameters (Structure, Clarity &amp; VRAM Ceiling)" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Col 1: Local Structure -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Local Structure Weight:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" ToolTip="Preservazione delle micro-strutture geometriche ad alta frequenza"/>
+                                            <TextBlock x:Name="valLocalStructure" Text="1.0x" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="11"/>
+                                        </Grid>
+                                        <Slider x:Name="slLocalStructure" Minimum="0" Maximum="200" Value="100" ValueChanged="GranularSlider_Changed"/>
+
+                                        <Grid Margin="0,8,0,3">
+                                            <TextBlock Text="Skin Structure Weight:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" ToolTip="Preserva i pori della pelle e i volti senza sfocatura neurale"/>
+                                            <TextBlock x:Name="valSkinStructure" Text="1.0x" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="11"/>
+                                        </Grid>
+                                        <Slider x:Name="slSkinStructure" Minimum="0" Maximum="200" Value="100" ValueChanged="GranularSlider_Changed"/>
+                                    </StackPanel>
+
+                                    <!-- Col 2: Ping-Pong Clarity & Contrast -->
+                                    <StackPanel Grid.Column="1" Margin="4,0,4,0">
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Ping-Pong Clarity:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" ToolTip="Micro-definizione delle transizioni sub-pixel nelle catene iterative"/>
+                                            <TextBlock x:Name="valCycleClarity" Text="0.20" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="11"/>
+                                        </Grid>
+                                        <Slider x:Name="slCycleClarity" Minimum="0" Maximum="100" Value="20" ValueChanged="GranularSlider_Changed"/>
+
+                                        <Grid Margin="0,8,0,3">
+                                            <TextBlock Text="Ping-Pong Sharpness:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" ToolTip="Nitidezza bicubica Catmull-Rom nei cicli di riciclo texture"/>
+                                            <TextBlock x:Name="valCycleSharpness" Text="0.35" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="11"/>
+                                        </Grid>
+                                        <Slider x:Name="slCycleSharpness" Minimum="0" Maximum="100" Value="35" ValueChanged="GranularSlider_Changed"/>
+                                    </StackPanel>
+
+                                    <!-- Col 3: VRAM Ceiling Threshold -->
+                                    <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="VRAM Target Ceiling:" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" ToolTip="Soglia percentuale massima per il calcolo automatico del Sweet Spot"/>
+                                            <TextBlock x:Name="valVramCeiling" Text="82.5%" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="11"/>
+                                        </Grid>
+                                        <Slider x:Name="slVramCeiling" Minimum="750" Maximum="900" Value="825" ValueChanged="GranularSlider_Changed"/>
+
+                                        <CheckBox x:Name="chkVramAuto" Content="VRAM Auto-Balance Lock" IsChecked="True" FontWeight="SemiBold" FontSize="11" Margin="0,14,0,0" Click="VramAuto_Click" ToolTip="Blocca l'allocazione al sweet spot 80-85% prevenendo l'out of memory"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 6: ReShade Post-Stack Toggles -->
+                        <Border Style="{StaticResource ModernCard}">
+                            <StackPanel>
+                                <TextBlock Text="ReShade Post-Stack Shaders &amp; Illumination" FontWeight="Bold" FontSize="13" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,8"/>
+                                <WrapPanel>
+                                    <CheckBox x:Name="chkRtao" Content="Lumenite RTAO (Ambient Occlusion)" IsChecked="True" Margin="0,0,16,6" Click="NeuralCheck_Click" ToolTip="Occlusione ambientale ray-traced con stima di profondità"/>
+                                    <CheckBox x:Name="chkLsao" Content="Lumenite LSAO (Large Scale AO)" IsChecked="True" Margin="0,0,16,6" Click="NeuralCheck_Click" ToolTip="Ombreggiatura diffusa su larga scala"/>
+                                    <CheckBox x:Name="chkSssr" Content="Lumenite SSSR (Specular Reflections)" IsChecked="True" Margin="0,0,16,6" Click="NeuralCheck_Click" ToolTip="Riflessi speculari con temporal ray-marching"/>
+                                    <CheckBox x:Name="chkBloom" Content="Lumenite Anamorphic Bloom" IsChecked="True" Margin="0,0,16,6" Click="NeuralCheck_Click" ToolTip="Diffrazione ottica anamorfica e riflessi spettrali"/>
+                                    <CheckBox x:Name="chkTraa" Content="Lumenite TRAA (Temporal AA)" IsChecked="True" Margin="0,0,16,6" Click="NeuralCheck_Click" ToolTip="Antialiasing temporale sub-pixel di rifinitura"/>
+                                    <CheckBox x:Name="chkBlur" Content="Cinematic Motion Blur" IsChecked="True" Margin="0,0,16,6" Click="NeuralCheck_Click" ToolTip="Sfuocatura cinematico guidata dal velocity buffer"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- VIEW 3: VRAM SWEET SPOT -->
+                <ScrollViewer x:Name="ViewVram" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Border Style="{StaticResource ModernCard}">
+                            <StackPanel>
+                                <TextBlock Text="Hardware Telemetry &amp; VRAM Allocation Engine" FontWeight="Bold" FontSize="13.5" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,8"/>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="txtVramGpu" Grid.Column="0" Text="GPU: NVIDIA GeForce RTX 4070 (12,282 MiB Total VRAM)" FontWeight="SemiBold" FontSize="11.5"/>
+                                    <TextBlock x:Name="txtVramLiveDriver" Grid.Column="1" Text="Windows &amp; Driver Live In-Use: 2,100 MB" Foreground="{StaticResource BrushTextSecondary}" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+
+                                <TextBlock x:Name="txtVramStatusHeader" Text="OPTIMAL SWEET SPOT (82.5%) - Target 80-85% Locked" FontWeight="Bold" FontSize="14" Foreground="{StaticResource BrushAccentGreen}" Margin="0,0,0,6"/>
+                                <ProgressBar x:Name="pbVram" Height="14" Value="82" Foreground="{StaticResource BrushAccentGreen}" Background="{StaticResource BrushBgInput}" Margin="0,0,0,10"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Button Content="⚡ Auto-Calibrate 82.5% Sweet Spot" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="12,5" FontSize="11" Click="CalibrateSweetSpot_Click" ToolTip="Ricalcola automaticamente tutti i parametri per centrare l'82.5% VRAM"/>
+                                    <Button Content="🛡 Verify Zero-Crash Boundaries" Style="{StaticResource SecondaryButton}" Padding="12,5" FontSize="11" Margin="8,0,0,0" Click="VerifyGuardrails_Click" ToolTip="Esegue il test di stabilità su tutti i parametri del buffer"/>
+                                </StackPanel>
+
+                                <TextBlock Text="VRAM Budget Allocation Matrix:" FontWeight="Bold" FontSize="11" Margin="0,0,0,4"/>
+                                <TextBox x:Name="txtVramBreakdown" Height="150" FontFamily="Consolas" FontSize="10.5" Background="#0A0D14" Foreground="#4DB6AC" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- VIEW 4: PRESETS -->
+                <Grid x:Name="ViewPresets" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource ModernCard}" Margin="0,0,10,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Hardware Calibrated Presets:" FontWeight="Bold" FontSize="12" Margin="0,0,0,6"/>
+                            <ListBox Grid.Row="1" x:Name="lstPresets" Background="{StaticResource BrushBgInput}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" SelectionChanged="LstPresets_SelectionChanged">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="2,3">
+                                            <TextBlock Text="{Binding PresetName}" FontWeight="Bold" FontSize="11" Foreground="{StaticResource BrushAccentCyan}"/>
+                                            <TextBlock Text="{Binding TargetHardware}" FontSize="9.5" Foreground="{StaticResource BrushAccentGreen}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button Grid.Row="2" Content="💾 Save Current Profile" Style="{StaticResource ModernButton}" Margin="0,6,0,0" Padding="0,5" FontSize="11" Click="SaveCustomPreset_Click" ToolTip="Salva le impostazioni correnti come nuovo preset personalizzato"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <TextBlock x:Name="txtPresetTitle" Text="Preset Details" FontWeight="Bold" FontSize="14" Foreground="{StaticResource BrushAccentCyan}"/>
+                                <TextBlock x:Name="txtPresetHardware" Text="Target Hardware: -" Foreground="{StaticResource BrushAccentGreen}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="txtPresetAuthor" Text="Author: -" Foreground="{StaticResource BrushTextSecondary}" FontSize="10.5" Margin="0,1,0,6"/>
+                                <TextBlock x:Name="txtPresetDesc" Text="-" TextWrapping="Wrap" FontSize="11" Margin="0,0,0,10"/>
+                                <Button Content="🚀 Apply Preset to Pipeline Matrix" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="12,6" FontSize="11.5" HorizontalAlignment="Left" Margin="0,0,0,10" Click="ApplyPreset_Click" ToolTip="Carica e applica questo profilo a tutti gli slider della pipeline"/>
+                                <TextBlock Text="Calibrated Parameter Matrix:" FontWeight="Bold" FontSize="11" Margin="0,0,0,4"/>
+                                <TextBox x:Name="txtPresetParams" Height="140" FontFamily="Consolas" FontSize="10.5" Background="#0A0D14" Foreground="#4DB6AC" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+
+                <!-- VIEW 5: DLSS 4/5 MODELS LIBRARY -->
+                <ScrollViewer x:Name="ViewDlss5" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Border Style="{StaticResource ModernCard}" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="DLSS 4 / 4.5 / 5 Model Repository &amp; Runtime Modules" FontWeight="Bold" FontSize="13.5" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,4"/>
+                                <TextBlock Text="Gestione diretta dei moduli DLL e addon (DLSS Super Resolution, DLSS-NR Denoising, Ray Reconstruction, Frame Gen, RenoDX)." FontSize="11" Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,8"/>
+                                
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtDlss5Folder" Grid.Column="0" FontFamily="Consolas" FontSize="11" Margin="0,0,6,0" IsReadOnly="True"/>
+                                    <Button Content="Browse..." Grid.Column="1" Style="{StaticResource SecondaryButton}" Width="90" Margin="0,0,6,0" Padding="0,5" FontSize="11" Click="BrowseDlss5_Click" ToolTip="Seleziona una cartella alternativa contenente modelli DLSS"/>
+                                    <Button Content="🔄 Rescan Models" Grid.Column="2" Style="{StaticResource ModernButton}" Width="120" Padding="0,5" FontSize="11" Click="RescanDlss5_Click" ToolTip="Riscansiona i modelli DLL presenti nella cartella"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource ModernCard}">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock Text="Detected DLSS Models &amp; Runtime Libraries:" FontWeight="Bold" FontSize="12.5" Foreground="{StaticResource BrushAccentCyan}"/>
+                                    <TextBlock x:Name="txtDlss5Count" Text="0 Models Found" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{StaticResource BrushAccentGreen}" FontSize="11.5"/>
+                                </Grid>
+
+                                <ListBox x:Name="lstDlss5Models" Background="{StaticResource BrushBgInput}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" MaxHeight="250" SelectionChanged="LstDlss5Models_SelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="3,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="190"/>
+                                                    <ColumnDefinition Width="140"/>
+                                                    <ColumnDefinition Width="75"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding FileName}" FontWeight="Bold" FontSize="11" FontFamily="Consolas" Foreground="{StaticResource BrushAccentCyan}"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Category}" FontSize="10.5" Foreground="{StaticResource BrushAccentGreen}"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding SizeDisplay}" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding Description}" FontSize="10.5" Foreground="{StaticResource BrushTextSecondary}" TextTrimming="CharacterEllipsis"/>
+                                                <Button Grid.Column="4" Content="Deploy to Game" Style="{StaticResource SecondaryButton}" Padding="7,2" FontSize="10" Tag="{Binding FullPath}" Click="DeploySingleModel_Click" ToolTip="Copia questa DLL direttamente nella cartella del gioco target"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button Content="🚀 Deploy All DLSS Models to Game" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="12,5" FontSize="11" Margin="0,0,8,0" Click="DeployAllDlss5_Click" ToolTip="Copia tutti i modelli DLSS nella cartella del gioco"/>
+                                    <Button Content="➕ Add Selected Model to Sequence" Style="{StaticResource ModernButton}" Padding="12,5" FontSize="11" Click="AddModelToSequence_Click" ToolTip="Aggiunge questo modello come layer dedicato nella pipeline sequence"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- VIEW 6: MULTI-API FLEET HUB (Whole-PC Game Scanner & 1-Click Injector) -->
+                <Grid x:Name="ViewWiki" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="290"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Table of Contents -->
+                    <Border Grid.Column="0" Style="{StaticResource ModernCard}" Margin="0,0,10,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock x:Name="txtWikiTocTitle" Grid.Row="0" Text="📚 Table of Contents / Capitoli:" FontWeight="Bold" FontSize="12.5" Foreground="{StaticResource BrushAccentCyan}" Margin="0,0,0,8"/>
+                            <ListBox Grid.Row="1" x:Name="lstWikiArticles" Background="{StaticResource BrushBgInput}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" SelectionChanged="LstWikiArticles_SelectionChanged">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource BrushBgCard}" CornerRadius="4" Padding="6,5" Margin="0,2">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding MenuDisplay}" FontWeight="Bold" FontSize="10.5" Foreground="{StaticResource BrushAccentCyan}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Summary}" FontSize="9" Foreground="{StaticResource BrushTextSecondary}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+
+                    <!-- Right: Article Viewer -->
+                    <Border Grid.Column="1" Style="{StaticResource ModernCard}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="4">
+                                <TextBlock x:Name="txtWikiTitle" Text="Capitolo Wiki" FontWeight="Bold" FontSize="15" Foreground="{StaticResource BrushAccentCyan}"/>
+                                <TextBlock x:Name="txtWikiCategory" Text="Categoria: -" Foreground="{StaticResource BrushAccentGreen}" FontSize="11" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="txtWikiSummary" Text="-" FontSize="11" Foreground="{StaticResource BrushTextSecondary}" Margin="0,2,0,10" TextWrapping="Wrap"/>
+                                <Separator Background="{StaticResource BrushBorder}" Margin="0,0,0,10"/>
+                                <TextBox x:Name="txtWikiContent" FontFamily="Consolas" FontSize="11" Background="#0A0D14" Foreground="#E0E0E0" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Padding="8"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- Bottom Status Bar -->
+            <Border Grid.Row="2" Background="{StaticResource BrushBgSidebar}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,1,0,0" Padding="14,0">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="txtStatusBar" Grid.Column="0" Text="Ready | Zero-Crash Guardrail Active | NVIDIA RTX 4070 12GB Calibrated" FontSize="10.5" Foreground="{StaticResource BrushAccentCyan}"/>
+                    <TextBlock x:Name="txtStatusHwTier" Grid.Column="1" Text="Tier 2: High-End (82.5% Target Locked)" FontSize="10" Foreground="{StaticResource BrushAccentGreen}"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

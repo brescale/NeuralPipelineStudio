@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <Product>Neural Pipeline Studio</Product>
+    <Company>Neural Pipeline Open Project</Company>
+    <Authors>Neural Pipeline Contributors</Authors>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>

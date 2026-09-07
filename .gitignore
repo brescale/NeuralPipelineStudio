@@ -1,0 +1,34 @@
+# Build output
+bin/
+obj/
+publish/
+dist/
+*.exe
+*.dll
+*.pdb
+*.addon64
+
+# Package Archives (Prevent exceeding GitHub 100 MB file limit)
+*.zip
+*.7z
+*.tar.gz
+*.rar
+
+# Visual Studio / Rider / VSCode
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# System & temporary files
+*.log
+*.tmp
+thumbs.db
+desktop.ini
+
+# Local Runtime User Data & Cache
+detected_games.json
+studio_settings.json
