@@ -1,16 +1,22 @@
 # ⚡ Neural Pipeline Studio v2.0
 
-[![Release](https://img.shields.io/badge/release-v2.0.0-00E5FF.svg)](https://github.com/)
-[![Target .NET](https://img.shields.io/badge/.NET-8.0_LTS-512BD4.svg)](https://dotnet.microsoft.com/)
-[![Platform](https://img.shields.io/badge/platform-win--x64-blue.svg)](https://microsoft.com/)
-[![Graphics APIs](https://img.shields.io/badge/APIs-DX12%20|%20DX11%20|%20Vulkan%20|%20DX10--9-00E676.svg)](#supported-apis)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Bilingual](https://img.shields.io/badge/Language-English%20%7C%20Italiano-FFD700.svg)](#localization)
+[![Release](https://img.shields.io/badge/Release-v2.0--beta-00E5FF.svg?style=for-the-badge&logo=github)](https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.0-beta)
+[![Target .NET](https://img.shields.io/badge/.NET-8.0_LTS-512BD4.svg?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
+[![Platform](https://img.shields.io/badge/Platform-Windows_x64-0078D4.svg?style=for-the-badge&logo=windows)](https://microsoft.com/)
+[![GPU Compatibility](https://img.shields.io/badge/GPU-Universal_RTX_%7C_GTX_%7C_Radeon_%7C_Arc-76B900.svg?style=for-the-badge&logo=nvidia&logoColor=white)](#gpu--hardware-compatibility)
+[![Games Fleet](https://img.shields.io/badge/Fleet-Steam_%7C_Xbox_%7C_Epic_%7C_GOG-107C41.svg?style=for-the-badge&logo=xbox&logoColor=white)](#1-home--pc-games-fleet-hub)
+[![Language](https://img.shields.io/badge/Language-English_Default_%7C_Italiano-FFD700.svg?style=for-the-badge)](#localization)
 
 > [!IMPORTANT]
-> ### 📦 Looking for the ready-to-run app? (No installation required)
-> **[👉 Click here to download NeuralPipelineStudio_v2.0_Portable.zip (570 MB) 👈](https://github.com/brescale/NeuralPipelineStudio/releases/download/v2.0-beta/NeuralPipelineStudio_v2.0_Portable.zip)**  
-> *The portable release comes pre-packaged with `NeuralPipelineStudio.exe`, 16 DLSS models, ReShade shaders, runtime proxies, presets, and the embedded .NET 8 runtime. Extract anywhere and double-click `NeuralPipelineStudio.exe` or `Launch Studio.bat`!*  
+> ## 🚀 Neural Pipeline Studio v2.0-beta — Universal Portable Release
+>
+> ### **[👉 Click Here to Download NeuralPipelineStudio_v2.0_Portable.zip (570 MB) 👈](https://github.com/brescale/NeuralPipelineStudio/releases/download/v2.0-beta/NeuralPipelineStudio_v2.0_Portable.zip)**
+>
+> - **💎 Universal GPU Architecture**: 100% compatible with **NVIDIA GeForce** (RTX 40/30/20 & GTX 16/10), **AMD Radeon** (RX 7000/6000/5000 series via integrated OptiScaler FSR 3.1), and **Intel Arc** (A-Series via XeSS 1.3 bridge).
+> - **🎮 Multi-Game PC Fleet Scanner**: 1-click automated storage scanner detecting installed titles across **Steam**, **Xbox Game Pass**, **Epic Games Store**, and **GOG** on all drives.
+> - **🌐 Bilingual Out-of-the-Box**: Launches in **English by default** for international users with an instant 1-click **Italian switcher** (`[🇬🇧 EN]` / `[🇮🇹 IT]`) in the header bar.
+> - **📦 Zero Setup Required**: Standalone portable package with embedded .NET 8 LTS runtime, 16 DLSS models, ReShade shaders, runtime proxies, and certified hardware presets. Extract anywhere and double-click `NeuralPipelineStudio.exe` or `Launch Studio.bat`!
+>
 > *(If you downloaded the source code ZIP, `Launch Studio.bat` will automatically compile with .NET 8 or prompt you to download the portable ZIP above).*
 
 **Neural Pipeline Studio** is a standalone, universal GPU neural rendering workstation and multi-API game injection manager engineered for AAA gaming environments (*Red Dead Redemption 2*, *Cyberpunk 2077*, *Grand Theft Auto V*, *The Witcher 3*, and more).
@@ -151,7 +157,7 @@ NeuralPipelineStudio/
 ### Build Command
 `powershell
 # Clone the repository
-git clone https://github.com/your-username/NeuralPipelineStudio.git
+git clone https://github.com/brescale/NeuralPipelineStudio.git
 cd NeuralPipelineStudio
 
 # Build in Release mode
@@ -160,6 +166,30 @@ dotnet build src/NeuralPipelineStudio/NeuralPipelineStudio.csproj -c Release
 # Or publish standalone self-contained binary
 dotnet publish src/NeuralPipelineStudio/NeuralPipelineStudio.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o dist/
 `
+
+---
+
+## 🎬 Presentation Video Description & Showcase Caption
+
+```text
+⚡ Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite (PC)
+========================================================================================
+🚀 Download Portable Release (Zero Install): https://github.com/brescale/NeuralPipelineStudio/releases/tag/v2.0-beta
+
+Transform your PC gaming visuals with Neural Pipeline Studio — the all-in-one neural rendering workstation and multi-API injector!
+
+✨ KEY HIGHLIGHTS:
+• 🌐 Universal GPU Compatibility: 100% compatible across NVIDIA GeForce (RTX 40/30/20 & GTX 16/10), AMD Radeon (RX 7000/6000/5000 via OptiScaler FSR 3.1), and Intel Arc (A-Series via XeSS 1.3).
+• 🎮 Multi-Game PC Fleet Scanner: 1-click automatic detection for Steam, Xbox Game Pass, Epic Games, and GOG titles across all storage drives.
+• 🔄 Interactive Ping-Pong Rescaling: Fine-tune real-time downscale (0.70x / 70%) and neural upscale expansion (up to 1500% Super Resolution) with zero VRAM buffer overhead.
+• 🧠 Full Neural Suite: DLSS 2/3/3.5/4/5 architecture, RenoDX HDR tensor synthesis (498 nits), DLSS-NR neural denoising, and ReShade post-stack shaders (RTAO, SSSR, bloom, motion blur).
+• ⚡ 1-Click Hardware Auto-Calibration: Automatically calculates optimal pipeline loops and locks video memory at the 82.5% sweet spot to eliminate out-of-memory driver crashes.
+• 🌍 Bilingual UI: Full English interface out-of-the-box with instant 1-click Italian switcher ([🇬🇧 EN] / [🇮🇹 IT]).
+
+💻 100% Portable — No installation required. Just extract and launch!
+#PCGaming #DLSS #NVIDIA #AMDRadeon #IntelArc #ReShade #OptiScaler #GamingSetup #Modding
+========================================================================================
+```
 
 ---
 

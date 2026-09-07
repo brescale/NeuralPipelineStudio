@@ -1,4 +1,4 @@
-﻿# ⚡ Neural Pipeline Studio v2.0 Release Notes
+# ⚡ Neural Pipeline Studio v2.0 Release Notes
 
 **Release Date:** September 2026  
 **Build:** v2.0.0 (Production Release)  
@@ -21,9 +21,7 @@
 ### 3. 🎛 Interactive Parameter Inspector & Rescaling Engine
 - **Dual Input Controls**: Every numerical parameter features synchronized sliders and exact-value text boxes.
 - **Ping-Pong Rescaling Loop**: Fine-tune Downscale ratios (e.g. 0.70x / 70%), Upscale expansion (e.g. 1.428x / 143% or up to 1500% Super Resolution), and loop counts (1x - 50x) with zero VRAM buffer overhead.
-- **Direct Shader, DLL & Addon Mappings**: Explicitly link each rendering pass with its associated ReShade shader (.fx), DLSS model (
-vngx_dlss.dll, 
-vngx.dll_dlssnr.dll), and runtime addon (enodx-dlss5.addon64, OptiScaler.dll).
+- **Direct Shader, DLL & Addon Mappings**: Explicitly link each rendering pass with its associated ReShade shader (`.fx`), DLSS model (`nvngx_dlss.dll`, `nvngx.dll_dlssnr.dll`), and runtime addon (`renodx-dlss5.addon64`, `OptiScaler.dll`).
 
 ### 4. 📊 Hardware Auto-Calibration & VRAM Sweet Spot Guardrail
 - **Auto-Calibrate for This PC**: 1-click calculation tailoring pipeline cycles, tensor passes, and DLSS resolution multipliers directly to your GPU's exact VRAM and architecture.
