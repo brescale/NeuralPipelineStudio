@@ -18,12 +18,12 @@ namespace NeuralPipelineStudio.Models
 
         // 2° Neural Pass (DLSS-NR)
         public int DlssNrPasses { get; set; } = 15;
-        public float DlssNrTransferStrength { get; set; } = 1.00f; // 100% synthesized layer
-        public float DlssNrWhitePointTrim { get; set; } = 4.0f;
-        public float DlssNrLocalStructure { get; set; } = 4.0f;
-        public float DlssNrSkinStructure { get; set; } = 4.0f;
+        public float DlssNrTransferStrength { get; set; } = 2.00f;
+        public float DlssNrWhitePointTrim { get; set; } = 1.0f;
+        public float DlssNrLocalStructure { get; set; } = 2.0f;
+        public float DlssNrSkinStructure { get; set; } = 2.0f;
         public float DlssNrIntensity { get; set; } = 4.0f;
-        public int DlssNrStyle { get; set; } = 2;
+        public int DlssNrStyle { get; set; } = 0; // Standard Default Style
         public bool DlssNrEnabled { get; set; } = true;
         public bool DlssNrUseProxy { get; set; } = true;
 

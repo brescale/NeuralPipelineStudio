@@ -452,27 +452,37 @@ namespace NeuralPipelineStudio.Core
             if (File.Exists(optiIniPath))
             {
                 string text = File.ReadAllText(optiIniPath);
-                // InitFlags
+                // InitFlags & Post-processing
                 text = UpdateIniKey(text, "InitFlags", "AutoExposure", "true");
+                text = UpdateIniKey(text, "CAS", "DAClampOutput", "false");
+                text = UpdateIniKey(text, "OutputScaling", "Enabled", "false");
 
-                // DlssNr
+                // Adaptive Model Quality / Dynamic Resolution (Adaptive to FPS)
+                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideEnabled", "false");
+                text = UpdateIniKey(text, "QualityOverrides", "QualityRatioOverrideEnabled", "false");
+                text = UpdateIniKey(text, "DRS", "DrsMinOverrideEnabled", "false");
+                text = UpdateIniKey(text, "DRS", "DrsMaxOverrideEnabled", "false");
+
+                // DlssNr - Standard Color, Adaptive Quality, All other items to MAX
                 text = UpdateIniKey(text, "DlssNr", "Enabled", "true");
-                text = UpdateIniKey(text, "DlssNr", "Passes", settings.DlssNrPasses.ToString());
-                text = UpdateIniKey(text, "DlssNr", "TransferStrength", "2.000000");
-                text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.300000");
-                text = UpdateIniKey(text, "DlssNr", "MaxRatio", "4.000000");
-                text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true");
+                text = UpdateIniKey(text, "DlssNr", "ApplyModel", "true");
+                text = UpdateIniKey(text, "DlssNr", "Passes", "15");
+                text = UpdateIniKey(text, "DlssNr", "TransferStrength", "2.000000"); // Detail strength max
+                text = UpdateIniKey(text, "DlssNr", "ColourStrength", "1.000000");   // Standard color
+                text = UpdateIniKey(text, "DlssNr", "Style", "0");                   // Standard default style
+                text = UpdateIniKey(text, "DlssNr", "MaxRatio", "8.000000");         // Highlight guard max
+                text = UpdateIniKey(text, "DlssNr", "WhitePointFromExposure", "true"); // Auto exposure active
                 text = UpdateIniKey(text, "DlssNr", "WhitePointSource", "auto");
-                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", settings.DlssNrWhitePointTrim.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "WorkingScale", "1.500000");
-                text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");
-                text = UpdateIniKey(text, "DlssNr", "Style", "2");
-                text = UpdateIniKey(text, "DlssNr", "LocalStructure", settings.DlssNrLocalStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "SkinStructure", settings.DlssNrSkinStructure.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "Intensity", settings.DlssNrIntensity.ToString("0.000000", CultureInfo.InvariantCulture));
-                text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");
-                text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");
-                text = UpdateIniKey(text, "UpscaleRatio", "UpscaleRatioOverrideValue", (1.0f / settings.DownscaleRatio).ToString("0.000000", CultureInfo.InvariantCulture));
+                text = UpdateIniKey(text, "DlssNr", "WhitePointTrim", "1.000000");   // 1:1 exposure (fixes dark/crushed contrast)
+                text = UpdateIniKey(text, "DlssNr", "WorkingScale", "auto");         // Model resolution adaptive to FPS
+                text = UpdateIniKey(text, "DlssNr", "Preset", "auto");               // Model preset adaptive
+                text = UpdateIniKey(text, "DlssNr", "ScalingDownscaler", "4");       // Lanczos3
+                text = UpdateIniKey(text, "DlssNr", "LocalStructure", "2.000000");   // Local structure max
+                text = UpdateIniKey(text, "DlssNr", "LocalTone", "4.000000");        // Local tone max
+                text = UpdateIniKey(text, "DlssNr", "SkinStructure", "2.000000");    // Skin structure max
+                text = UpdateIniKey(text, "DlssNr", "Intensity", "4.000000");        // Intensity max
+                text = UpdateIniKey(text, "DlssNr", "AutoMask", "true");             // Auto skin mask active
+                text = UpdateIniKey(text, "DlssNr", "ReversibleMode", "4");          // Reversible hybrid composed
                 File.WriteAllText(optiIniPath, text, Encoding.UTF8);
             }
 
