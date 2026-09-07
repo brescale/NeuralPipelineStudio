@@ -1,3 +1,5 @@
+using NeuralPipelineStudio.Common;
+
 namespace NeuralPipelineStudio.Models
 {
     public class VramReport
@@ -44,7 +46,16 @@ namespace NeuralPipelineStudio.Models
             GraphicsApi.DirectX11 => "DirectX 11 (D3D11)",
             _ => "DirectX 9/10"
         };
-        public string AntiCheatDisplay => HasAntiCheat ? AntiCheatName : "Clean (Singleplayer Safe)";
+        public string AntiCheatDisplay => HasAntiCheat ? AntiCheatName : (LocalizationManager.CurrentLanguage == AppLanguage.English ? "Clean (Singleplayer Safe)" : "Pulito (Sicuro Singleplayer)");
         public string AntiCheatColorHex => HasAntiCheat ? "#FBBF24" : "#5EEAD4";
+
+        public string CardBtnConfigureText => LocalizationManager.Get("HomeCardConfigure");
+        public string CardBtnConfigureTip => LocalizationManager.Get("HomeCardConfigureTip");
+        public string CardBtnInjectText => LocalizationManager.Get("HomeCardInject");
+        public string CardBtnInjectTip => LocalizationManager.Get("HomeCardInjectTip");
+        public string CardBtnVanillaText => LocalizationManager.Get("HomeCardVanilla");
+        public string CardBtnVanillaTip => LocalizationManager.Get("HomeCardVanillaTip");
+        public string CardBtnLaunchText => LocalizationManager.Get("HomeCardLaunch");
+        public string CardBtnLaunchTip => LocalizationManager.Get("HomeCardLaunchTip");
     }
 }

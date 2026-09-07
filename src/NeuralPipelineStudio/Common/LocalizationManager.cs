@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,7 +14,7 @@ namespace NeuralPipelineStudio.Common
 
     public static class LocalizationManager
     {
-        private static AppLanguage _currentLanguage = AppLanguage.Italian;
+        private static AppLanguage _currentLanguage = AppLanguage.English;
         private static readonly string SettingsFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "studio_settings.json");
 
         public static event Action? LanguageChanged;
@@ -140,8 +140,8 @@ namespace NeuralPipelineStudio.Common
             }
             catch { }
 
-            string sysCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
-            return sysCulture == "it" ? AppLanguage.Italian : AppLanguage.English;
+            // Default to English for international GitHub releases
+            return AppLanguage.English;
         }
 
         private static void SaveLanguagePreference(AppLanguage lang)

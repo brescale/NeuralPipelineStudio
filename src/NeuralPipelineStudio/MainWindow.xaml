@@ -1,4 +1,4 @@
-﻿<Window x:Class="NeuralPipelineStudio.MainWindow"
+<Window x:Class="NeuralPipelineStudio.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Neural Pipeline Studio v2.0 - Universal AAA Neural Rendering Suite"
@@ -78,8 +78,8 @@
                     <!-- Title / Back to Home Button & Live Hardware Telemetry Banner -->
                     <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button x:Name="btnHeaderBackToHome" Content="⬅ Torna alla Home" Style="{StaticResource SecondaryButton}" Padding="8,3" FontSize="11" Margin="0,0,10,0" Visibility="Collapsed" Click="BackToHome_Click" ToolTip="Torna alla schermata iniziale per selezionare o scansionare altri giochi"/>
-                            <TextBlock x:Name="txtSectionTitle" Text="Libreria Giochi PC &amp; Flotta Neurale" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                            <Button x:Name="btnHeaderBackToHome" Content="⬅ Back to Home" Style="{StaticResource SecondaryButton}" Padding="8,3" FontSize="11" Margin="0,0,10,0" Visibility="Collapsed" Click="BackToHome_Click" ToolTip="Return to home screen to select or scan other games"/>
+                            <TextBlock x:Name="txtSectionTitle" Text="PC Games Library &amp; Neural Fleet Hub" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                         <TextBlock x:Name="txtHwBanner" Text="NVIDIA GeForce RTX 4070 | Driver: 616.56 | VRAM: 12,282 MB | Core i9-11900KF | 32 GB RAM" FontSize="11.5" FontWeight="SemiBold" Foreground="#67E8F9" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
@@ -89,30 +89,30 @@
                         <!-- Language Toggle Buttons (IT / EN) -->
                         <Border Background="#1E2433" BorderBrush="#3E4866" BorderThickness="1" CornerRadius="4" Margin="0,0,8,0" Padding="2">
                             <StackPanel Orientation="Horizontal">
-                                <Button x:Name="btnLangIt" Content="🇮🇹 IT" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentCyan}" Foreground="#000000" Padding="6,3" FontSize="10" FontWeight="Bold" Click="LangIt_Click" ToolTip="Imposta interfaccia in Italiano"/>
-                                <Button x:Name="btnLangEn" Content="🇬🇧 EN" Style="{StaticResource SecondaryButton}" Background="Transparent" Foreground="#CBD5E1" Padding="6,3" FontSize="10" FontWeight="Bold" BorderThickness="0" Click="LangEn_Click" ToolTip="Switch interface to English"/>
+                                <Button x:Name="btnLangIt" Content="🇮🇹 IT" Style="{StaticResource SecondaryButton}" Background="Transparent" Foreground="#CBD5E1" Padding="6,3" FontSize="10" FontWeight="Bold" BorderThickness="0" Click="LangIt_Click" ToolTip="Imposta interfaccia in Italiano"/>
+                                <Button x:Name="btnLangEn" Content="🇬🇧 EN" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentCyan}" Foreground="#000000" Padding="6,3" FontSize="10" FontWeight="Bold" Click="LangEn_Click" ToolTip="Switch interface to English"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Auto-Calibrate for This PC Button -->
-                        <Button x:Name="btnHeaderAutoCalibrate" Content="⚡ Auto-Calibrate PC" Style="{StaticResource ModernButton}" Background="#1565C0" Foreground="#FFFFFF" Padding="8,5" FontSize="11" Margin="0,0,8,0" Click="AutoCalibrateHardware_Click" ToolTip="Adatta automaticamente tutti i parametri della pipeline alle specifiche esatte di questo PC, bloccando il carico all'82.5% VRAM"/>
+                        <Button x:Name="btnHeaderAutoCalibrate" Content="⚡ Auto-Calibrate PC" Style="{StaticResource ModernButton}" Background="#1565C0" Foreground="#FFFFFF" Padding="8,5" FontSize="11" Margin="0,0,8,0" Click="AutoCalibrateHardware_Click" ToolTip="Automatically adapt all pipeline parameters to this PC's hardware specs, locking VRAM at the 82.5% sweet spot"/>
 
                         <!-- Guardrail Badge -->
-                        <Border Background="#004D40" BorderBrush="#00897B" BorderThickness="1" CornerRadius="4" Padding="6,3" Margin="0,0,8,0" ToolTip="Tutti i vincoli di sicurezza hardware (risoluzione minima e cicli) sono rispettati">
+                        <Border Background="#004D40" BorderBrush="#00897B" BorderThickness="1" CornerRadius="4" Padding="6,3" Margin="0,0,8,0" ToolTip="All hardware safety guardrails are active">
                             <TextBlock x:Name="txtGuardrailBadge" Text="🛡 ZERO-CRASH: OK" FontWeight="Bold" Foreground="#4DB6AC" FontSize="10.5"/>
                         </Border>
 
                         <!-- VRAM Badge -->
-                        <Border x:Name="badgeVram" Background="{StaticResource BrushAccentGreen}" CornerRadius="4" Padding="6,3" Margin="0,0,8,0" ToolTip="Carico stimato in memoria video sul target ideale 80-85%">
+                        <Border x:Name="badgeVram" Background="{StaticResource BrushAccentGreen}" CornerRadius="4" Padding="6,3" Margin="0,0,8,0" ToolTip="Estimated video memory load locked to the 80-85% sweet spot target">
                             <TextBlock x:Name="txtVramBadge" Text="VRAM: 82.5% SWEET SPOT" FontWeight="Bold" Foreground="#000000" FontSize="10.5"/>
                         </Border>
 
                         <!-- Contextual Actions for Selected Game -->
                         <StackPanel x:Name="pnlHeaderGameActions" Orientation="Horizontal" Visibility="Collapsed">
-                            <Button x:Name="btnHeaderInject" Content="🚀 Inietta" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="8,5" FontSize="11" Margin="0,0,6,0" Click="HeaderInject_Click" ToolTip="Installa la suite completa nel gioco attualmente attivo"/>
-                            <Button x:Name="btnHeaderVanilla" Content="🧹 Vanilla" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Padding="8,5" FontSize="11" Margin="0,0,6,0" Click="HeaderVanilla_Click" ToolTip="Ripristina il gioco attualmente attivo allo stato 100% vanilla"/>
-                            <Button x:Name="btnHeaderLaunch" Content="▶ Launch" Style="{StaticResource ModernButton}" Background="#2E7D32" Foreground="#FFFFFF" Padding="9,5" FontSize="11" Margin="0,0,6,0" Click="LaunchGame_Click" ToolTip="Avvia l'eseguibile del gioco attualmente attivo"/>
-                            <Button x:Name="btnHeaderSave" Content="💾 Save" Style="{StaticResource ModernButton}" Padding="9,5" FontSize="11" Click="SavePipeline_Click" ToolTip="Salva e sincronizza la configurazione nei file del gioco"/>
+                            <Button x:Name="btnHeaderInject" Content="🚀 Inject" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="8,5" FontSize="11" Margin="0,0,6,0" Click="HeaderInject_Click" ToolTip="Install complete suite into the currently active game"/>
+                            <Button x:Name="btnHeaderVanilla" Content="🧹 Vanilla" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Padding="8,5" FontSize="11" Margin="0,0,6,0" Click="HeaderVanilla_Click" ToolTip="Restore the currently active game to 100% clean vanilla state"/>
+                            <Button x:Name="btnHeaderLaunch" Content="▶ Launch" Style="{StaticResource ModernButton}" Background="#2E7D32" Foreground="#FFFFFF" Padding="9,5" FontSize="11" Margin="0,0,6,0" Click="LaunchGame_Click" ToolTip="Launch the active game executable"/>
+                            <Button x:Name="btnHeaderSave" Content="💾 Save" Style="{StaticResource ModernButton}" Padding="9,5" FontSize="11" Click="SavePipeline_Click" ToolTip="Save and synchronize configuration to game directory"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -230,16 +230,16 @@
                                                 <!-- Right Actions -->
                                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                                     <!-- Primary: Configure Game Studio -->
-                                                    <Button Content="🎛 Configura Gioco &amp; Pipeline" Style="{StaticResource ModernButton}" Background="#1565C0" Foreground="#FFFFFF" Padding="11,5" FontSize="11" FontWeight="SemiBold" Margin="0,0,6,0" Tag="{Binding}" Click="ConfigureGame_Click" ToolTip="Entra nello studio dedicato a questo gioco per configurare la sequenza di rendering, il DLSS e i preset"/>
+                                                    <Button Content="{Binding CardBtnConfigureText}" ToolTip="{Binding CardBtnConfigureTip}" Style="{StaticResource ModernButton}" Background="#1565C0" Foreground="#FFFFFF" Padding="11,5" FontSize="11" FontWeight="SemiBold" Margin="0,0,6,0" Tag="{Binding}" Click="ConfigureGame_Click"/>
                                                     
                                                     <!-- Inietta -->
-                                                    <Button Content="🚀 Inietta" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="9,5" FontSize="10.5" Margin="0,0,4,0" Tag="{Binding}" Click="InjectGame_Click" ToolTip="Installa proxy, shader e modelli neurali in questo gioco"/>
+                                                    <Button Content="{Binding CardBtnInjectText}" ToolTip="{Binding CardBtnInjectTip}" Style="{StaticResource ModernButton}" Background="{StaticResource BrushAccentGreen}" Padding="9,5" FontSize="10.5" Margin="0,0,4,0" Tag="{Binding}" Click="InjectGame_Click"/>
 
                                                     <!-- Rimuovi -->
-                                                    <Button Content="🧹 Vanilla" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Padding="8,5" FontSize="10.5" Margin="0,0,4,0" Tag="{Binding}" Click="UninstallGame_Click" ToolTip="Ripristina il gioco al 100% allo stato vanilla"/>
+                                                    <Button Content="{Binding CardBtnVanillaText}" ToolTip="{Binding CardBtnVanillaTip}" Style="{StaticResource SecondaryButton}" Foreground="{StaticResource BrushAccentRed}" Padding="8,5" FontSize="10.5" Margin="0,0,4,0" Tag="{Binding}" Click="UninstallGame_Click"/>
 
                                                     <!-- Launch -->
-                                                    <Button Content="▶ Avvia" Style="{StaticResource SecondaryButton}" Padding="8,5" FontSize="10.5" Tag="{Binding}" Click="LaunchFromCard_Click" ToolTip="Avvia l'eseguibile di questo gioco"/>
+                                                    <Button Content="{Binding CardBtnLaunchText}" ToolTip="{Binding CardBtnLaunchTip}" Style="{StaticResource SecondaryButton}" Padding="8,5" FontSize="10.5" Tag="{Binding}" Click="LaunchFromCard_Click"/>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
